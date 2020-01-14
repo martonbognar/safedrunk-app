@@ -1,6 +1,12 @@
+## Installation
+
 For installation instructions, see [here](https://facebook.github.io/react-native/docs/getting-started).
 
-For running the app:
+Follow the guide for `React Native CLI Quickstart` → `Linux` → `Android`.
+
+## Running the app on the emulator
+
+After starting the emulator:
 
 ```shell
 cd bali-app
