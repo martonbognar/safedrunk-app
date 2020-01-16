@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Text, View, FlatList, TextInput } from 'react-native';
+import { Text, View, FlatList, TextInput, TouchableHighlight, Alert, StyleSheet } from 'react-native';
 
 export default class Try extends Component {
   constructor(props) {
@@ -33,6 +33,22 @@ export default class Try extends Component {
       });
   }
 
+  onListItemPressed(_item) {
+    Alert.alert (
+      'Test alert.', 
+      'Item name: ' + _item.name + 'Item percentage: ' + _item.percentage, 
+      [
+        {text: 'Ask me later', onPress: () => console.log('Ask me later pressed')},
+        {
+          text: 'Cancel',
+          onPress: () => console.log('Cancel Pressed'),
+          style: 'cancel',
+        },
+        {text: 'OK', onPress: () => console.log('OK Pressed')},
+      ]
+      ,{cancelable: true})
+  }
+
   render() {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
@@ -43,9 +59,29 @@ export default class Try extends Component {
         />
         <FlatList
           data={this.state.beverages}
-          renderItem={({ item }) => <Text>{item.name}, {item.percentage}</Text>}
+          renderItem={
+            ({ item }) => 
+              <TouchableHighlight 
+                style={styles.button} 
+                underlayColor={'rgb(100, 100, 100)'}
+                onPress={() => this.onListItemPressed(item)}> 
+
+                  <Text>{item.name}, {item.percentage}</Text> 
+
+              </TouchableHighlight>
+          }
         />
       </View>
     );
   }
 }
+
+const styles = StyleSheet.create({
+  button: {
+    alignItems: 'center',
+    backgroundColor: '#DDDDDD',
+    padding: 10,
+    margin: 2,
+    borderRadius: 5
+  }
+})
