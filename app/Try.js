@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Text, View, FlatList, TextInput, TouchableHighlight, Alert, StyleSheet } from 'react-native';
+import { Drink } from './Drink.js';
 
 export default class Try extends Component {
   constructor(props) {
@@ -7,9 +8,11 @@ export default class Try extends Component {
     this.state = {
       beverages: [],
       filter: '',
+      drinks: []
     };
 
     this.updateList = this.updateList.bind(this);
+    this.onListItemPressed = this.onListItemPressed.bind(this);
   }
 
   updateList() {
@@ -33,20 +36,26 @@ export default class Try extends Component {
       });
   }
 
-  onListItemPressed(_item) {
+  myAlert (alertTitle, alertText) {
     Alert.alert (
-      'Test alert.', 
-      'Item name: ' + _item.name + 'Item percentage: ' + _item.percentage, 
-      [
-        {text: 'Ask me later', onPress: () => console.log('Ask me later pressed')},
-        {
-          text: 'Cancel',
-          onPress: () => console.log('Cancel Pressed'),
-          style: 'cancel',
-        },
-        {text: 'OK', onPress: () => console.log('OK Pressed')},
-      ]
-      ,{cancelable: true})
+        alertTitle, 
+        alertText, 
+        [
+          {text: 'Ask me later', onPress: () => console.log('Ask me later pressed')},
+          {
+            text: 'Cancel',
+            onPress: () => console.log('Cancel Pressed'),
+            style: 'cancel',
+          },
+          {text: 'OK', onPress: () => console.log('OK Pressed')},
+        ]
+        ,{cancelable: true})
+  }
+
+  onListItemPressed(item) {
+    this.setState({
+      drinks: this.state.drinks.concat ([{name: item.name, percentage: item.percentage}])
+    });
   }
 
   render() {
@@ -69,6 +78,19 @@ export default class Try extends Component {
                   <Text>{item.name}, {item.percentage}</Text> 
 
               </TouchableHighlight>
+          }
+        />
+        <View style = {{borderWidth: 0.5, borderColor:'black', margin:10}} />
+        <FlatList
+          data={this.state.drinks}
+          renderItem={
+            ({ item }) =>  
+              <Drink
+                name={item.name}
+                percentage={item.percentage}
+                //onRemove={this.myAlert ('OnRemoveCallback', 'Item name: ' + item.name + 'Item percentage: ' + item.percentage)}
+                //onDuplicate={this.myAlert ('OnduplicateCallback', 'Item name: ' + item.name + 'Item percentage: ' + item.percentage)}
+              />
           }
         />
       </View>
