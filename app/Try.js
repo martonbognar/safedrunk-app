@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Text, View, FlatList, TextInput, TouchableHighlight, Alert, StyleSheet } from 'react-native';
-import { Drink } from './Drink.js';
+import Drink from './Drink.js';
 
 export default class Try extends Component {
   constructor(props) {
@@ -8,7 +8,8 @@ export default class Try extends Component {
     this.state = {
       beverages: [],
       filter: '',
-      drinks: []
+      drinks: [],
+      keygen: 0,
     };
 
     this.updateList = this.updateList.bind(this);
@@ -36,25 +37,27 @@ export default class Try extends Component {
       });
   }
 
-  myAlert (alertTitle, alertText) {
-    Alert.alert (
-        alertTitle, 
-        alertText, 
-        [
-          {text: 'Ask me later', onPress: () => console.log('Ask me later pressed')},
-          {
-            text: 'Cancel',
-            onPress: () => console.log('Cancel Pressed'),
-            style: 'cancel',
-          },
-          {text: 'OK', onPress: () => console.log('OK Pressed')},
-        ]
-        ,{cancelable: true})
+  myAlert(alertTitle, alertText) {
+    Alert.alert(
+      alertTitle,
+      alertText,
+      [
+        { text: 'Ask me later', onPress: () => console.log('Ask me later pressed') },
+        {
+          text: 'Cancel',
+          onPress: () => console.log('Cancel Pressed'),
+          style: 'cancel',
+        },
+        { text: 'OK', onPress: () => console.log('OK Pressed') },
+      ]
+      , { cancelable: true })
   }
 
   onListItemPressed(item) {
+    let self = this;
     this.setState({
-      drinks: this.state.drinks.concat ([{name: item.name, percentage: item.percentage}])
+      drinks: self.state.drinks.concat([{ key: self.state.keygen.toString(), name: item.name, percentage: item.percentage }]),
+      keygen: self.state.keygen + 1,
     });
   }
 
@@ -69,27 +72,26 @@ export default class Try extends Component {
         <FlatList
           data={this.state.beverages}
           renderItem={
-            ({ item }) => 
-              <TouchableHighlight 
-                style={styles.button} 
+            ({ item }) =>
+              <TouchableHighlight
+                style={styles.button}
                 underlayColor={'rgb(100, 100, 100)'}
-                onPress={() => this.onListItemPressed(item)}> 
-
-                  <Text>{item.name}, {item.percentage}</Text> 
-
+                onPress={() => this.onListItemPressed(item)}>
+                <Text>{item.name}, {item.percentage}</Text>
               </TouchableHighlight>
           }
         />
-        <View style = {{borderWidth: 0.5, borderColor:'black', margin:10}} />
+        <View style={{ borderWidth: 0.5, borderColor: 'black', margin: 10 }} />
         <FlatList
           data={this.state.drinks}
           renderItem={
-            ({ item }) =>  
+            ({ item }) =>
               <Drink
+                key={item.key}
                 name={item.name}
                 percentage={item.percentage}
-                //onRemove={this.myAlert ('OnRemoveCallback', 'Item name: ' + item.name + 'Item percentage: ' + item.percentage)}
-                //onDuplicate={this.myAlert ('OnduplicateCallback', 'Item name: ' + item.name + 'Item percentage: ' + item.percentage)}
+              //onRemove={this.myAlert ('OnRemoveCallback', 'Item name: ' + item.name + 'Item percentage: ' + item.percentage)}
+              //onDuplicate={this.myAlert ('OnduplicateCallback', 'Item name: ' + item.name + 'Item percentage: ' + item.percentage)}
               />
           }
         />
