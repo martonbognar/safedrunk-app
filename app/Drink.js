@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Text } from 'react-native';
+import { intervalToText } from './utils/strings.js';
 
 export default class Drink extends Component {
     constructor(props) {
@@ -7,12 +8,25 @@ export default class Drink extends Component {
 
         this.state = {
             //favorite: !!this.props.favoriteId,
-            //timeText: 'just about right now'//intervalToText(this.props.startTime),
+            timeText: intervalToText(this.props.startTime),
         };
 
         this.remove = this.remove.bind(this);
         this.duplicate = this.duplicate.bind(this);
         //this.favorite = this.favorite.bind(this);
+    }
+
+    componentDidMount() {
+        this.timerID = setInterval(
+            () => this.setState({
+                timeText: intervalToText(this.props.startTime),
+            }),
+            1000
+        );
+    }
+
+    componentWillUnmount() {
+        clearInterval(this.timerID);
     }
 
     remove() {
@@ -30,7 +44,7 @@ export default class Drink extends Component {
     render() {
         return (
             <Text style={'color: rgb(100,0,100)'}>
-                Your drinks name: {this.props.name}, {this.props.percentage}
+                {this.props.name} ({this.props.percentage}%) · {this.state.timeText}
             </Text>
         );
     }

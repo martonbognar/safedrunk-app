@@ -56,7 +56,7 @@ export default class Try extends Component {
   onListItemPressed(item) {
     let self = this;
     this.setState({
-      drinks: self.state.drinks.concat([{ key: self.state.keygen.toString(), name: item.name, percentage: item.percentage }]),
+      drinks: self.state.drinks.concat([{ key: self.state.keygen.toString(), name: item.name, percentage: item.percentage, startTime: new Date() }]),
       keygen: self.state.keygen + 1,
     });
   }
@@ -90,6 +90,7 @@ export default class Try extends Component {
                 key={item.key}
                 name={item.name}
                 percentage={item.percentage}
+                startTime={item.startTime}
               //onRemove={this.myAlert ('OnRemoveCallback', 'Item name: ' + item.name + 'Item percentage: ' + item.percentage)}
               //onDuplicate={this.myAlert ('OnduplicateCallback', 'Item name: ' + item.name + 'Item percentage: ' + item.percentage)}
               />
