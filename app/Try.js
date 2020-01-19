@@ -1,8 +1,11 @@
 import React, { Component } from 'react';
-import { Text, View, FlatList, TextInput, TouchableHighlight, Alert, StyleSheet } from 'react-native';
+import { Text, View, FlatList, TextInput, TouchableHighlight, Alert, StyleSheet, Button } from 'react-native';
 import Drink from './Drink.js';
+import { createAppContainer } from 'react-navigation';
+import { createStackNavigator } from 'react-navigation-stack';
+import Settings from './Settings.js'
 
-export default class Try extends Component {
+class Try extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -81,6 +84,10 @@ export default class Try extends Component {
               </TouchableHighlight>
           }
         />
+        <Button
+          title="Go to Settings"
+          onPress={() => this.props.navigation.navigate('My Settings')}
+        />
         <View style={{ borderWidth: 0.5, borderColor: 'black', margin: 10 }} />
         <FlatList
           data={this.state.drinks}
@@ -109,4 +116,16 @@ const styles = StyleSheet.create({
     margin: 2,
     borderRadius: 5
   }
-})
+});
+
+const AppNavigator = createStackNavigator(
+  {
+    Home: Try,
+    "My Settings": Settings,
+  },
+  {
+    initialRouteName: 'Home',
+  },
+);
+
+export default createAppContainer(AppNavigator);
