@@ -16,7 +16,9 @@ class Try extends Component {
     };
 
     this.updateList = this.updateList.bind(this);
-    this.onListItemPressed = this.onListItemPressed.bind(this);
+    this.removeDrink = this.removeDrink.bind(this);
+    this.duplicateDrink = this.duplicateDrink.bind(this);
+    this.submitDrink = this.submitDrink.bind(this);
   }
 
   updateList() {
@@ -40,6 +42,28 @@ class Try extends Component {
       });
   }
 
+  removeDrink(drink) {
+    let index = -1;
+    this.state.drinks.forEach(function (d, i) {
+      if (d.key === drink.id) {
+        index = i;
+      }
+    });
+    const tempDrinks = this.state.drinks;
+    tempDrinks.splice(index, 1);
+    this.setState({ drinks: tempDrinks }, this.saveDrinks);
+  }
+
+  duplicateDrink(drink) {
+    this.submitDrink({
+      name: drink.name,
+      amount: drink.amount,
+      percentage: drink.percentage,
+      unit: drink.unit,
+      startTime: new Date(),
+    });
+  }
+
   myAlert(alertTitle, alertText) {
     Alert.alert(
       alertTitle,
@@ -56,10 +80,17 @@ class Try extends Component {
       , { cancelable: true })
   }
 
-  onListItemPressed(item) {
+  submitDrink(item) {
     let self = this;
     this.setState({
-      drinks: self.state.drinks.concat([{ key: self.state.keygen.toString(), name: item.name, percentage: item.percentage, startTime: new Date() }]),
+      drinks: self.state.drinks.concat([{
+        key: self.state.keygen.toString(),
+        name: item.name,
+        percentage: item.percentage,
+        amount: 0,
+        unit: null,
+        startTime: new Date(),
+      }]),
       keygen: self.state.keygen + 1,
     });
   }
@@ -79,7 +110,7 @@ class Try extends Component {
               <TouchableHighlight
                 style={styles.button}
                 underlayColor={'rgb(100, 100, 100)'}
-                onPress={() => this.onListItemPressed(item)}>
+                onPress={() => this.submitDrink(item)}>
                 <Text>{item.name}, {item.percentage}</Text>
               </TouchableHighlight>
           }
@@ -95,11 +126,12 @@ class Try extends Component {
             ({ item }) =>
               <Drink
                 key={item.key}
+                id={item.key}
                 name={item.name}
                 percentage={item.percentage}
                 startTime={item.startTime}
-              //onRemove={this.myAlert ('OnRemoveCallback', 'Item name: ' + item.name + 'Item percentage: ' + item.percentage)}
-              //onDuplicate={this.myAlert ('OnduplicateCallback', 'Item name: ' + item.name + 'Item percentage: ' + item.percentage)}
+                onRemove={this.removeDrink}
+                onDuplicate={this.duplicateDrink}
               />
           }
         />

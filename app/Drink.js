@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Text } from 'react-native';
+import { Text, Button, View } from 'react-native';
 import { intervalToText } from './utils/strings.js';
 
 export default class Drink extends Component {
@@ -43,9 +43,13 @@ export default class Drink extends Component {
 
     render() {
         return (
-            <Text style={'color: rgb(100,0,100)'}>
-                {this.props.name} ({this.props.percentage}%) · {this.state.timeText}
-            </Text>
+            <View>
+                <Text style={'color: rgb(100,0,100)'}>
+                    {this.props.name} ({this.props.percentage}%) · {this.state.timeText}
+                </Text>
+                <Button title="+" onPress={this.duplicate} />
+                <Button title="-" onPress={this.remove} />
+            </View>
         );
     }
 };
