@@ -4,6 +4,8 @@ import Drink from './Drink.js';
 import { createAppContainer } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
 import Settings from './Settings.js'
+import Calculator from './Calculator'
+import { WEIGHTS } from './data/units';
 
 class Try extends Component {
   constructor(props) {
@@ -13,6 +15,11 @@ class Try extends Component {
       filter: '',
       drinks: [],
       keygen: 0,
+      basicData: {
+        sex: 'female',
+        weight: 60,
+        weightUnit: 'kg',
+      },
     };
 
     this.updateList = this.updateList.bind(this);
@@ -87,8 +94,8 @@ class Try extends Component {
         key: self.state.keygen.toString(),
         name: item.name,
         percentage: item.percentage,
-        amount: 0,
-        unit: null,
+        amount: 5,
+        unit: 'dl',
         startTime: new Date(),
       }]),
       keygen: self.state.keygen + 1,
@@ -97,7 +104,7 @@ class Try extends Component {
 
   render() {
     return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+      <View>
         <TextInput
           placeholder="Search for a beverage..."
           value={this.state.filter}
@@ -135,6 +142,7 @@ class Try extends Component {
               />
           }
         />
+        <Calculator drinks={this.state.drinks} weight={this.state.basicData.weight * WEIGHTS[this.state.basicData.weightUnit]} sex={this.state.basicData.sex} />
       </View>
     );
   }
