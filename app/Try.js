@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
 import { Text, View, FlatList, TextInput, TouchableHighlight, Alert, StyleSheet, Button } from 'react-native';
-import Drink from './Drink.js';
 import { createAppContainer } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
+import AsyncStorage from '@react-native-community/async-storage';
+
+import Drink from './Drink.js';
 import Settings from './Settings.js'
 import Calculator from './Calculator'
 import { WEIGHTS } from './data/units';
@@ -22,10 +24,16 @@ class Try extends Component {
       },
     };
 
+    this.updateBasicData = this.updateBasicData.bind(this);
     this.updateList = this.updateList.bind(this);
     this.removeDrink = this.removeDrink.bind(this);
     this.duplicateDrink = this.duplicateDrink.bind(this);
     this.submitDrink = this.submitDrink.bind(this);
+  }
+
+  updateBasicData(basicData) {
+    this.myAlert("", JSON.stringify(basicData));
+    this.setState({ basicData: basicData });
   }
 
   updateList() {
@@ -103,6 +111,7 @@ class Try extends Component {
   }
 
   render() {
+    const self = this;
     return (
       <View>
         <TextInput
@@ -124,7 +133,10 @@ class Try extends Component {
         />
         <Button
           title="Go to Settings"
-          onPress={() => this.props.navigation.navigate('My Settings')}
+          onPress={() => this.props.navigation.navigate('My Settings', {
+            basicData: self.state.basicData,
+            onSave: self.updateBasicData,
+          })}
         />
         <View style={{ borderWidth: 0.5, borderColor: 'black', margin: 10 }} />
         <FlatList
