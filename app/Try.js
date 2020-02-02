@@ -24,16 +24,35 @@ class Try extends Component {
       },
     };
 
+    this.getDataFromStorage = this.getDataFromStorage.bind(this);
     this.updateBasicData = this.updateBasicData.bind(this);
     this.updateList = this.updateList.bind(this);
     this.removeDrink = this.removeDrink.bind(this);
     this.duplicateDrink = this.duplicateDrink.bind(this);
     this.submitDrink = this.submitDrink.bind(this);
+
+    this.getDataFromStorage();
   }
 
-  updateBasicData(basicData) {
-    this.myAlert("", JSON.stringify(basicData));
+  async getDataFromStorage() {
+    try {
+      const value = await AsyncStorage.getItem('basicData');
+      if (value !== null) {
+        this.setState({ basicData: JSON.parse(value) });
+      }
+    } catch (e) {
+      this.myAlert("", e.toString());
+      // error reading value
+    }
+  }
+
+  async updateBasicData(basicData) {
     this.setState({ basicData: basicData });
+    try {
+      await AsyncStorage.setItem('basicData', JSON.stringify(basicData));
+    } catch (e) {
+      // saving error
+    }
   }
 
   updateList() {
