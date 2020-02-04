@@ -7,6 +7,7 @@ import AsyncStorage from '@react-native-community/async-storage';
 import Drink from './Drink.js';
 import Settings from './Settings.js'
 import Calculator from './Calculator'
+import DefaultNewDrink from './forms/Default'
 import { WEIGHTS } from './data/units';
 
 class Try extends Component {
@@ -17,6 +18,7 @@ class Try extends Component {
       filter: '',
       drinks: [],
       keygen: 0,
+      showNewDrink: 'none',
       basicData: {
         sex: 'female',
         weight: 60,
@@ -26,10 +28,12 @@ class Try extends Component {
 
     this.getDataFromStorage = this.getDataFromStorage.bind(this);
     this.updateBasicData = this.updateBasicData.bind(this);
-    this.updateList = this.updateList.bind(this);
     this.removeDrink = this.removeDrink.bind(this);
     this.duplicateDrink = this.duplicateDrink.bind(this);
     this.submitDrink = this.submitDrink.bind(this);
+    this.toggleDrinkForm = this.toggleDrinkForm.bind(this);
+    this.cancelDrinkForm = this.cancelDrinkForm.bind(this);
+    this.addDrinkComponent = this.addDrinkComponent.bind(this);
 
     this.getDataFromStorage();
   }
@@ -55,27 +59,6 @@ class Try extends Component {
     }
   }
 
-  updateList() {
-    if (this.state.filter == "") {
-      this.setState({ beverages: [] });
-      return;
-    }
-
-    fetch(`https://safedrunk.com/api/beverages/filter/${this.state.filter}`)
-      .then((response) => response.json())
-      .then((responseJson) => {
-        this.setState({
-          beverages: responseJson.map((beverage) => {
-            beverage.id = beverage.id.toString();
-            return beverage;
-          }),
-        });
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-  }
-
   removeDrink(drink) {
     let index = -1;
     this.state.drinks.forEach(function (d, i) {
@@ -98,22 +81,6 @@ class Try extends Component {
     });
   }
 
-  myAlert(alertTitle, alertText) {
-    Alert.alert(
-      alertTitle,
-      alertText,
-      [
-        { text: 'Ask me later', onPress: () => console.log('Ask me later pressed') },
-        {
-          text: 'Cancel',
-          onPress: () => console.log('Cancel Pressed'),
-          style: 'cancel',
-        },
-        { text: 'OK', onPress: () => console.log('OK Pressed') },
-      ]
-      , { cancelable: true })
-  }
-
   submitDrink(item) {
     let self = this;
     this.setState({
@@ -129,27 +96,31 @@ class Try extends Component {
     });
   }
 
+  toggleDrinkForm(param) {
+    this.setState({ showNewDrink: param });
+  }
+
+  cancelDrinkForm() {
+    this.setState({ showNewDrink: 'none' });
+  }
+
+  addDrinkComponent() {
+    switch (this.state.showNewDrink) {
+      case 'none':
+        return <View>
+          <Button title="Quick add" onPress={() => this.toggleDrinkForm('quick')} />
+          <Button title="Beverage list" onPress={() => this.toggleDrinkForm('default')} />
+        </View>;
+      case 'quick': return <QuickNewDrink onChange={this.submitDrink} cancel={this.cancelDrinkForm} />;
+      default: return <DefaultNewDrink onChange={this.submitDrink} cancel={this.cancelDrinkForm} />;
+    }
+  }
+
   render() {
     const self = this;
     return (
       <View>
-        <TextInput
-          placeholder="Search for a beverage..."
-          value={this.state.filter}
-          onChangeText={(text) => this.setState({ filter: text }, this.updateList)}
-        />
-        <FlatList
-          data={this.state.beverages}
-          renderItem={
-            ({ item }) =>
-              <TouchableHighlight
-                style={styles.button}
-                underlayColor={'rgb(100, 100, 100)'}
-                onPress={() => this.submitDrink(item)}>
-                <Text>{item.name}, {item.percentage}</Text>
-              </TouchableHighlight>
-          }
-        />
+        {this.addDrinkComponent()}
         <Button
           title="Go to Settings"
           onPress={() => this.props.navigation.navigate('My Settings', {
