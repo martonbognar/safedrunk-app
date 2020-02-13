@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Text, View, Button, TextInput, Picker } from 'react-native';
-import { WEIGHTS } from './data/units';
+import { WEIGHTS } from '../data/units';
 
 export default class Settings extends Component {
   constructor(props) {
@@ -25,13 +25,13 @@ export default class Settings extends Component {
           <Picker.Item label="Female" value="female"/>
         </Picker>
         <View style={{flexDirection: 'row', alignItems: 'center'}}>
-        <Text>Weight: </Text>
-        <TextInput
-          placeholder="65"
-          keyboardType='numeric'
-          value={this.state.weight.toString()}
-          onChangeText={(text) => this.setState({ weight: text }, this.updateList)}
-        /> 
+          <Text>Weight: </Text>
+          <TextInput
+            placeholder="65"
+            keyboardType='numeric'
+            value={this.state.weight.toString()}
+            onChangeText={(text) => this.setState({ weight: text }, this.updateList)}
+          /> 
         </View>
         <Picker 
           selectedValue={this.state.weightUnit} 

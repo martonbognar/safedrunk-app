@@ -4,11 +4,12 @@ import { createAppContainer } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
 import AsyncStorage from '@react-native-community/async-storage';
 
-import Drink from './Drink.js';
+import Drink from '../Drink.js';
 import Settings from './Settings.js'
-import Calculator from './Calculator'
-import DefaultNewDrink from './forms/Default'
-import { WEIGHTS } from './data/units';
+import Calculator from '../Calculator'
+import DefaultNewDrink from '../forms/Default'
+import { WEIGHTS } from '../data/units';
+import QuickAdd from '../forms/QuickAdd.js';
 
 class Try extends Component {
   constructor(props) {
@@ -121,6 +122,18 @@ class Try extends Component {
     return (
       <View>
         {this.addDrinkComponent()}
+        {/* <Button title="Quick add"     onPress={() => this.toggleDrinkForm('quick')} />
+        <Button title="Beverage list" onPress={() => this.props.navigation.navigate('Beverage list', {
+          defaultBeverage: self.state.beverages
+          onSave: sel
+        })} /> */}
+        <Button 
+          title="My Quick add"     
+          onPress={() => this.props.navigation.navigate('Quick add' , {
+            // previousBeverage: self.state.drinks[0],  // TODO: Make it previous
+            previousBeverage: self.state.drinks.length === 0 ? null : drinks[0],
+            onSave: self.submitDrinks
+          })} />
         <Button
           title="Go to Settings"
           onPress={() => this.props.navigation.navigate('My Settings', {
@@ -164,6 +177,7 @@ const AppNavigator = createStackNavigator(
   {
     Home: Try,
     "My Settings": Settings,
+    "Quick add": QuickAdd,
   },
   {
     initialRouteName: 'Home',
