@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import { Text, View, Button, TextInput } from 'react-native';
+import { Text, View, Button, TextInput, Picker } from 'react-native';
+import { WEIGHTS } from './data/units';
 
 export default class Settings extends Component {
   constructor(props) {
@@ -16,21 +17,30 @@ export default class Settings extends Component {
   render() {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <Picker 
+          selectedValue={this.state.sex} 
+          style={{height: 50, width: 200}}
+          onValueChange={(itemValue) => this.setState({ sex: itemValue })}>
+          <Picker.Item label="Male" value="male"/>
+          <Picker.Item label="Female" value="female"/>
+        </Picker>
+        <View style={{flexDirection: 'row', alignItems: 'center'}}>
+        <Text>Weight: </Text>
         <TextInput
-          placeholder="Sex"
-          value={this.state.sex}
-          onChangeText={(text) => this.setState({ sex: text }, this.updateList)}
-        />
-        <TextInput
-          placeholder="Weight"
+          placeholder="65"
+          keyboardType='numeric'
           value={this.state.weight.toString()}
           onChangeText={(text) => this.setState({ weight: text }, this.updateList)}
-        />
-        <TextInput
-          placeholder="Weight unit"
-          value={this.state.weightUnit}
-          onChangeText={(text) => this.setState({ weightUnit: text }, this.updateList)}
-        />
+        /> 
+        </View>
+        <Picker 
+          selectedValue={this.state.weightUnit} 
+          style={{height: 50, width: 200}}
+          onValueChange={(itemValue) => this.setState({ weightUnit: itemValue })}>
+          <Picker.Item label="Kg" value="kg"/>
+          <Picker.Item label="Lbs" value="lbs"/>
+          <Picker.Item label="Stone" value="stone"/>
+        </Picker>
         <Button
           title="Go back"
           onPress={() => this.props.navigation.goBack()}
