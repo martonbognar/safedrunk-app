@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Text, View, FlatList, TextInput, TouchableHighlight, Alert, StyleSheet, Button, Picker } from 'react-native';
 import { UNITS } from '../data/units';
+import DateTimePicker from '@react-native-community/datetimepicker';
 
 export default class DefaultNewDrink extends Component {
   constructor(props) {
@@ -23,12 +24,19 @@ export default class DefaultNewDrink extends Component {
 
     this.state = drinkDefault;
 
+    // time picking utils
+    this.currentDate = new Date ();
+    this.show = false;
+
     this.handlePresetChanged = this.handlePresetChanged.bind(this);
     this.handleAmountChanged = this.handleAmountChanged.bind(this);
     this.handleKeywordChanged = this.handleKeywordChanged.bind(this);
     this.handleStartTimeChanged = this.handleStartTimeChanged.bind(this);
     this.handleUnitChanged = this.handleUnitChanged.bind(this);
     this.submitData = this.submitData.bind(this);
+
+    this.onTimeChanged = this.onTimeChanged.bind(this);
+    this.showTimepicker = this.showTimepicker.bind(this);
 
   }
 
@@ -113,6 +121,17 @@ export default class DefaultNewDrink extends Component {
     //this.props.cancel();
   }
 
+  onTimeChanged (event, selectedDate) {
+    this.currentDate = selectedDate || this.currentDate;
+    this.show = false;
+    this.setState ({startTime: this.currentDate});
+  };
+
+  showTimepicker () {
+    this.show = true;
+    this.setState ({startTime: this.currentDate});
+  };
+
   render() {
     const startString = this.state.startTime.getFullYear() + '-' + ('0' + (this.state.startTime.getMonth() + 1)).slice(-2) + '-' + ('0' + this.state.startTime.getDate()).slice(-2) + 'T' + ('0' + this.state.startTime.getHours()).slice(-2) + ':' + ('0' + this.state.startTime.getMinutes()).slice(-2);
 
@@ -126,29 +145,46 @@ export default class DefaultNewDrink extends Component {
 
     return (
       <View>
+
         <TextInput
           placeholder="Search for a beverage..."
           value={this.state.keyword}
           onChangeText={this.handleKeywordChanged}
         />
+
         <Picker
           selectedValue={this.state.beverage_id}
           onValueChange={this.handlePresetChanged}>
           {drinks}
         </Picker>
+
         <TextInput
           placeholder="Amount"
           value={this.state.amount.toString()}
           onChangeText={this.handleAmountChanged}
         />
+
         <Picker
           selectedValue={this.state.unit}
           onValueChange={this.handleUnitChanged}>
           {unitList}
         </Picker>
+
+        <Text onPress={this.showTimepicker} >time: {this.state.startTime.toTimeString()}</Text>
+        {this.show && (<DateTimePicker
+          testID="dateTimePicker"
+          timeZoneOffsetInMinutes={0}
+          value={this.currentDate}
+          mode={'time'}
+          is24Hour={true}
+          display="default"
+          onChange={this.onTimeChanged}
+        />)}
+
         <Button
           onPress={this.submitData}
           title="Submit" />
+
       </View>
     );
   }

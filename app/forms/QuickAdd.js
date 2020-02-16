@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import { Text, View, FlatList, TextInput, TouchableHighlight, Alert, StyleSheet, Button, Picker } from 'react-native';
+import { Text, View, FlatList, TextInput, TouchableHighlight, Alert, StyleSheet, Button, Picker, ToastAndroid } from 'react-native';
 import { UNITS } from '../data/units';
-
+import DateTimePicker from '@react-native-community/datetimepicker';
 
 export default class QuickAdd extends Component {
   constructor(props) {
@@ -21,12 +21,19 @@ export default class QuickAdd extends Component {
 
     const previousBeverage = navigation.getParam('previousBeverage', drinkDefault);
 
-    if (previousBeverage === null)
+    if (previousBeverage === null) {
       this.state = drinkDefault;
-    else
+    } else {
       this.state = previousBeverage;
-    
+    }
+
+    // time picking utils
+    this.currentDate = new Date ();
+    this.show = false;
+
     this.hasValidInput = this.hasValidInput.bind(this);
+    this.onTimeChanged = this.onTimeChanged.bind(this);
+    this.showTimepicker = this.showTimepicker.bind(this);
   }
 
   hasValidInput() {
@@ -42,6 +49,17 @@ export default class QuickAdd extends Component {
     if (this.hasValidInput ())
       this.props.navigation.state.params.onSave(this.state);
   }
+
+  onTimeChanged (event, selectedDate) {
+    this.currentDate = selectedDate || this.currentDate;
+    this.setState ({startTime: this.currentDate});
+    this.show = false;
+  };
+
+  showTimepicker () {
+    this.show = true;
+    this.setState ({startTime: new Date ()});
+  };
 
   render() {
 
@@ -91,6 +109,17 @@ export default class QuickAdd extends Component {
           {pickerUnits}
         </Picker>
         
+        <Text onPress={this.showTimepicker} >time: {this.state.startTime.toTimeString()}</Text>
+        {this.show && (<DateTimePicker
+          testID="dateTimePicker"
+          timeZoneOffsetInMinutes={0}
+          value={this.currentDate}
+          mode={'time'}
+          is24Hour={true}
+          display="default"
+          onChange={this.onTimeChanged}
+        />)}
+
         <Button
           title="Go back"
           onPress={() => this.props.navigation.goBack()}
