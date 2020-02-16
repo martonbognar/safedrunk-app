@@ -34,7 +34,7 @@ class Try extends Component {
     this.submitDrink = this.submitDrink.bind(this);
     this.toggleDrinkForm = this.toggleDrinkForm.bind(this);
     this.cancelDrinkForm = this.cancelDrinkForm.bind(this);
-    this.addDrinkComponent = this.addDrinkComponent.bind(this);
+    //this.addDrinkComponent = this.addDrinkComponent.bind(this);
 
     this.getDataFromStorage();
   }
@@ -105,42 +105,45 @@ class Try extends Component {
     this.setState({ showNewDrink: 'none' });
   }
 
-  addDrinkComponent() {
-    switch (this.state.showNewDrink) {
-      case 'none':
-        return <View>
-          <Button title="Quick add" onPress={() => this.toggleDrinkForm('quick')} />
-          <Button title="Beverage list" onPress={() => this.toggleDrinkForm('default')} />
-        </View>;
-      case 'quick': return <QuickNewDrink onChange={this.submitDrink} cancel={this.cancelDrinkForm} />;
-      default: return <DefaultNewDrink onChange={this.submitDrink} cancel={this.cancelDrinkForm} />;
-    }
-  }
+  // addDrinkComponent() {
+  //   switch (this.state.showNewDrink) {
+  //     case 'none':
+  //       return <View>
+  //         <Button title="Quick add" onPress={() => this.toggleDrinkForm('quick')} />
+  //         <Button title="Beverage list" onPress={() => this.toggleDrinkForm('default')} />
+  //       </View>;
+  //     case 'quick': return <QuickNewDrink onChange={this.submitDrink} cancel={this.cancelDrinkForm} />;
+  //     default: return <DefaultNewDrink onChange={this.submitDrink} cancel={this.cancelDrinkForm} />;
+  //   }
+  // }
 
   render() {
     const self = this;
     return (
       <View>
-        {this.addDrinkComponent()}
-        {/* <Button title="Quick add"     onPress={() => this.toggleDrinkForm('quick')} />
-        <Button title="Beverage list" onPress={() => this.props.navigation.navigate('Beverage list', {
-          defaultBeverage: self.state.beverages
-          onSave: sel
-        })} /> */}
+
+        {/* {this.addDrinkComponent()} */}
+
         <Button 
           title="My Quick add"     
           onPress={() => this.props.navigation.navigate('Quick add' , {
-            // previousBeverage: self.state.drinks[0],  // TODO: Make it previous
             previousBeverage: self.state.drinks.length === 0 ? null : drinks[0],
-            onSave: self.submitDrinks
+            onSave: self.submitDrink
           })} />
+
+        <Button 
+          title="Beverage list"     
+          onPress={() => this.props.navigation.navigate('Beverage list' , {
+            onSave: self.submitDrink
+          })} />
+
         <Button
           title="Go to Settings"
           onPress={() => this.props.navigation.navigate('My Settings', {
             basicData: self.state.basicData,
             onSave: self.updateBasicData,
-          })}
-        />
+          })} />
+
         <View style={{ borderWidth: 0.5, borderColor: 'black', margin: 10 }} />
         <FlatList
           data={this.state.drinks}
@@ -178,6 +181,7 @@ const AppNavigator = createStackNavigator(
     Home: Try,
     "My Settings": Settings,
     "Quick add": QuickAdd,
+    "Beverage list": DefaultNewDrink,
   },
   {
     initialRouteName: 'Home',

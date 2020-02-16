@@ -47,8 +47,9 @@ export default class QuickAdd extends Component {
 
     const pickerUnits = [];
 
+    var id = 0;
     Object.keys(UNITS).forEach(function (unit) {
-      pickerUnits.push(<Picker.Item label={unit} value={unit}/>);
+      pickerUnits.push(<Picker.Item label={unit} key={id++} value={unit}/>);
     });
 
     return (

@@ -6,17 +6,22 @@ export default class DefaultNewDrink extends Component {
   constructor(props) {
     super(props);
 
-    this.state = {
+    const { navigation } = this.props;
+    const drinkDefault = { 
       name: '',
       amount: '',
       unit: Object.keys(UNITS)[0],
       percentage: '',
-      startTime: new Date(),
+      startTime: new Date(), 
       beverage_id: undefined,
       beverageList: [],
       keyword: '',
       modifyStart: false,
     };
+
+    // const previousBeverage = navigation.getParam('previousBeverage', drinkDefault);
+
+    this.state = drinkDefault;
 
     this.handlePresetChanged = this.handlePresetChanged.bind(this);
     this.handleAmountChanged = this.handleAmountChanged.bind(this);
@@ -24,6 +29,12 @@ export default class DefaultNewDrink extends Component {
     this.handleStartTimeChanged = this.handleStartTimeChanged.bind(this);
     this.handleUnitChanged = this.handleUnitChanged.bind(this);
     this.submitData = this.submitData.bind(this);
+
+  }
+
+  componentWillUnmount() {
+    // if (this.hasValidInput ())
+    //   this.props.navigation.state.params.onSave(this.state);
   }
 
   handlePresetChanged(value, index) {
@@ -96,9 +107,10 @@ export default class DefaultNewDrink extends Component {
   }
 
   submitData() {
-    this.props.onChange(this.state);
+    //this.props.onChange(this.state);
+    this.props.navigation.state.params.onSave(this.state);
     this.setState({ name: '', amount: '', percentage: '', startTime: new Date() });
-    this.props.cancel();
+    //this.props.cancel();
   }
 
   render() {
@@ -137,9 +149,6 @@ export default class DefaultNewDrink extends Component {
         <Button
           onPress={this.submitData}
           title="Submit" />
-        <Button
-          onPress={this.props.cancel}
-          title="Cancel" />
       </View>
     );
   }
