@@ -1,18 +1,12 @@
 import React, { Component } from 'react';
-import { Text, View, FlatList, TextInput, TouchableHighlight, Alert, StyleSheet, Button } from 'react-native';
-import { createAppContainer } from 'react-navigation';
-import { createStackNavigator } from 'react-navigation-stack';
+import { View, FlatList, Button } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 
 import Drink from '../Drink.js';
-import Settings from './Settings.js'
 import Calculator from '../Calculator'
-import DefaultNewDrink from '../forms/Default'
 import { WEIGHTS } from '../data/units';
-import QuickAdd from '../forms/QuickAdd.js';
-import Login from '../forms/Login';
 
-class Try extends Component {
+export default class Try extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -57,7 +51,7 @@ class Try extends Component {
     try {
       await AsyncStorage.setItem('basicData', JSON.stringify(basicData));
     } catch (e) {
-      // saving error
+      // saving errorhttps://github.com/react-native-community/react-native-device-info#getdevicename
     }
   }
 
@@ -169,29 +163,4 @@ class Try extends Component {
       </View>
     );
   }
-}
-
-const styles = StyleSheet.create({
-  button: {
-    alignItems: 'center',
-    backgroundColor: '#DDDDDD',
-    padding: 10,
-    margin: 2,
-    borderRadius: 5
-  }
-});
-
-const AppNavigator = createStackNavigator(
-  {
-    Home: Try,
-    "My Settings": Settings,
-    "Quick add": QuickAdd,
-    "Beverage list": DefaultNewDrink,
-    "Login": Login,
-  },
-  {
-    initialRouteName: 'Home',
-  },
-);
-
-export default createAppContainer(AppNavigator);
+};
