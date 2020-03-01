@@ -10,6 +10,7 @@ import Calculator from '../Calculator'
 import DefaultNewDrink from '../forms/Default'
 import { WEIGHTS } from '../data/units';
 import QuickAdd from '../forms/QuickAdd.js';
+import Login from '../forms/Login';
 
 class Try extends Component {
   constructor(props) {
@@ -124,15 +125,15 @@ class Try extends Component {
 
         {/* {this.addDrinkComponent()} */}
 
-        <Button 
-          title="My Quick add"     
+        <Button
+          title="My Quick add"
           onPress={() => this.props.navigation.navigate('Quick add' , {
             previousBeverage: self.state.drinks.length === 0 ? null : drinks[0],
             onSave: self.submitDrink
           })} />
 
-        <Button 
-          title="Beverage list"     
+        <Button
+          title="Beverage list"
           onPress={() => this.props.navigation.navigate('Beverage list' , {
             onSave: self.submitDrink
           })} />
@@ -143,6 +144,10 @@ class Try extends Component {
             basicData: self.state.basicData,
             onSave: self.updateBasicData,
           })} />
+
+        <Button
+          title="Login"
+          onPress={() => this.props.navigation.navigate('Login')} />
 
         <View style={{ borderWidth: 0.5, borderColor: 'black', margin: 10 }} />
         <FlatList
@@ -182,6 +187,7 @@ const AppNavigator = createStackNavigator(
     "My Settings": Settings,
     "Quick add": QuickAdd,
     "Beverage list": DefaultNewDrink,
+    "Login": Login,
   },
   {
     initialRouteName: 'Home',
