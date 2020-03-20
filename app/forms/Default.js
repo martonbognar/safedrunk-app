@@ -8,12 +8,12 @@ export default class DefaultNewDrink extends Component {
     super(props);
 
     const { navigation } = this.props;
-    const drinkDefault = { 
+    const drinkDefault = {
       name: '',
       amount: '',
       unit: Object.keys(UNITS)[0],
       percentage: '',
-      startTime: new Date(), 
+      startTime: new Date(),
       beverage_id: undefined,
       beverageList: [],
       keyword: '',
@@ -85,7 +85,7 @@ export default class DefaultNewDrink extends Component {
     if (keyword !== '') {
       const self = this;
 
-      fetch(`https://safedrunk.com/api/beverages/filter/${keyword}`)
+      fetch(`https://safedrunk.com/api/public/beverages/filter/${keyword}`)
         .then((response) => response.json())
         .then((response) => {
           self.setState({ beverageList: response });
