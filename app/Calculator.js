@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { calculateEbac } from './utils/ebac';
 import Effects from './Effects';
+import Graph from './Graph';
 import { View, Text } from 'react-native';
 
 class Calculator extends Component {
@@ -36,6 +37,7 @@ class Calculator extends Component {
             <View>
                 <Text>Blood alcohol content: {this.state.value}%</Text>
                 <Effects percentage={this.state.value} />
+                <Graph />
                 </View>
         );
     }
