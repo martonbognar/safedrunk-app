@@ -37,7 +37,7 @@ class Calculator extends Component {
             <View>
                 <Text>Blood alcohol content: {this.state.value}%</Text>
                 <Effects percentage={this.state.value} />
-                <Graph />
+                <Graph drinks={this.props.drinks} userData={{weight: this.props.weight, sex: this.props.sex}}/>
                 </View>
         );
     }
