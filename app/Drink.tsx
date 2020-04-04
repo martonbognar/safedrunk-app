@@ -2,18 +2,32 @@ import React, { Component } from 'react';
 import { Text, Button, View } from 'react-native';
 import { intervalToText } from './utils/strings.js';
 
-export default class Drink extends Component {
-    constructor(props) {
+interface DrinkProps {
+    startTime: Date,
+    name: string,
+    percentage: number,
+    onRemove: Function,
+    onDuplicate: Function,
+}
+
+interface DrinkState {
+    timeText: string,
+}
+
+export default class Drink extends Component<DrinkProps, DrinkState> {
+    timerID: number;
+
+    constructor(props: Readonly<DrinkProps>) {
         super(props);
 
         this.state = {
-            //favorite: !!this.props.favoriteId,
             timeText: intervalToText(this.props.startTime),
         };
 
+        this.timerID = 0;
+
         this.remove = this.remove.bind(this);
         this.duplicate = this.duplicate.bind(this);
-        //this.favorite = this.favorite.bind(this);
     }
 
     componentDidMount() {
@@ -37,14 +51,10 @@ export default class Drink extends Component {
         this.props.onDuplicate(this.props);
     }
 
-    //   favorite() {
-
-    //   }
-
     render() {
         return (
             <View>
-                <Text style={'color: rgb(100,0,100)'}>
+                <Text>
                     {this.props.name} ({this.props.percentage}%) · {this.state.timeText}
                 </Text>
                 <Button title="+" onPress={this.duplicate} />
