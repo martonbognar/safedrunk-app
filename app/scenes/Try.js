@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { View, FlatList, Button } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 
-import Drink from '../Drink.js';
+import Drink from '../Drink';
 import Calculator from '../Calculator'
 import { WEIGHTS } from '../data/units';
 
