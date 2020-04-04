@@ -1,64 +1,124 @@
 import Svg, {
+    Line,
     Circle,
-    Text,
-    Line
+    Path,
+    Text
 } from 'react-native-svg';
 import React, { Component } from 'react';
 import { ebacSteps } from './utils/ebac';
+
+import {View, ToastAndroid} from 'react-native';
 
 export default class SVGGraph extends Component {
     constructor(props) {
         super(props);
 
         this.state = {
-            circles: [],
-            labels: [],
-            lines: [],
-            lineLabels: [],
+            // dimensions: null,
+            data: {
+                values: [],
+                labels: [],
+            },
+            graph: {
+                circles: [],
+                path: <Path d="" fill="none" stroke="red"/>,
+                lines: [],
+                horizontalLabels: [],
+                verticalLabels: [],
+            }
         };
 
         this.updateGraph = this.updateGraph.bind(this);
+        this.updateSessionData  = this.updateSessionData.bind(this);
     }
 
-    updateGraph() {
+    updateSessionData() {
         const data = ebacSteps(this.props.drinks, this.props.userData);
-        const keys = [].concat(...data.output.map((obj) => Object.keys(obj)));
-        if (data.comeDown.length === 2) {
-            keys.push(Object.keys(data.comeDown[1])[0]);
-        }
-        const regular = [].concat(...data.output.map((obj) => Object.values(obj)));
-        const comeDownBase = regular.length > 1 ? Array(regular.length - 1).fill(null) : [];
-        const comeDown = comeDownBase.concat(...data.comeDown.map((obj) => Object.values(obj)));
-
-        const maxValue = Math.max(...regular.map(parseFloat));
 
         this.setState({
-            circles: keys.map((val, idx) => {
-                const cx = idx * 100 / keys.length + 2;
-                const cy = 100 - (parseFloat(regular[idx]) * 100 / maxValue) + 2;
-                return <Circle cx={`${cx}%`} cy={`${cy}%`} r="2" fill="red" />;
-            })
+            data: {
+                values: [].concat(...data.output.map((obj) => Object.values(obj))),
+                labels: [].concat(...data.output.map((obj) => Object.keys(obj))),
+            },
         });
+    }
 
-        this.setState({
-            labels: keys.map((val, idx) => {
-                const x = idx * 100 / keys.length + 2;
-                return <Text stroke="black" x={`${x}%`} y='90%'>{val}</Text>;
-            }),
+    calculatePath (coords) {
+        let pathData = `M ${coords[0].x} ${coords[0].y} `;
+        for (let i = 1; i < coords.length; ++i) {
+
+            pathData = pathData.concat(`L ${Math.round(coords[i].x)} ${Math.round(coords[i].y)} `);
+        }
+        pathData = pathData.concat('z');
+        return pathData;
+    }
+
+    updateGraph() {     
+
+        // TODO: update upon some event outside of component
+        this.updateSessionData();
+
+        const { values } = this.state.data;
+        const { labels } = this.state.data;
+        
+        const maxValue = Math.max(...values.map(parseFloat));
+        //const bottomLabelHeight = 90;    // percent
+        const headerSize = 10;
+        const canvasSize = 100 - headerSize;
+
+        if (labels.length == 0)
+            return;
+
+        const points = labels.map((val, idx) => {
+            const cx = headerSize + idx * canvasSize / labels.length;
+            const cy = headerSize + canvasSize - (parseFloat(values[idx]) * canvasSize / maxValue);
+            return { 
+                x: cx, 
+                y: cy, 
+                hLabel: val, 
+                vLabel: parseFloat(values[idx]),
+            };
         });
 
         const lines = [];
         const lineLabels = [];
 
-        for (let i = 0; i <= maxValue + 0.05; i += 0.05) {
-            const y = 100 - (i * 100 / maxValue) + 2;
+        const dt = maxValue / 5;
+        for (let i = 0; i <= maxValue + dt; i += dt) {
+            const y = headerSize + canvasSize - (i * canvasSize / maxValue) + 2;
             lines.push(<Line stroke='black' x1='0' x2='100%' y1={`${y}%`} y2={`${y}%`} />);
-            lineLabels.push(<Text stroke="black" x='0' y={`${y - 2}%`}>{i}</Text>);
+            lineLabels.push(<Text stroke="black" x='0' y={`${y - 2}%`}>{Math.round((i + Number.EPSILON) * 100) / 100}</Text>);
         }
 
+        if (points.length < 2) {
+            this.setState({
+                graph: {    
+                    lines: lines,
+                    verticalLabels: lineLabels,
+                }
+            });
+            return;
+        }
+
+        //console.log(JSON.stringify(dimensions));
+
+        pathData = this.calculatePath (points);
+
         this.setState({
-            lines: lines,
-            lineLabels: lineLabels,
+            graph: {
+                circles: points.map((val, idx) => {
+                    return <Circle cx={`${val.x}%`} cy={`${val.y}%`} r="2" fill="red" />;
+                }),
+
+                //path: <Path d="M 10 10 L 55 10 z" fill="none" stroke="red" vector-effect="non-scaling-stroke"/>,
+
+                horizontalLabels: points.map((val, idx) => {
+                    return <Text stroke="black" x={`${val.x}%`} y='100%'>{val.hLabel}</Text>;
+                }),
+
+                lines: lines,
+                verticalLabels: lineLabels,
+            }
         });
     }
 
@@ -67,13 +127,24 @@ export default class SVGGraph extends Component {
         setInterval(this.updateGraph, 5000); // TODO: not this
     }
 
-    render() {
+    render() { 
         return (
+            // <View width='100%' height="30%">
+            // <Svg width='100%' height="100%" viewBox="0 0 100 100" preserveAspectRatio="none">
+            //     {this.state.graph.lines}
+            //     {this.state.graph.circles}
+            //     {this.state.graph.path}
+            //     {this.state.graph.horizontalLabels}
+            //     {this.state.graph.verticalLabels}
+            // </Svg>
+            // </View>
+
             <Svg width='100%' height="30%">
-                {this.state.circles}
-                {this.state.labels}
-                {this.state.lines}
-                {this.state.lineLabels}
+                {this.state.graph.lines}
+                {this.state.graph.circles}
+                {/* {this.state.graph.path} */}
+                {this.state.graph.horizontalLabels}
+                {this.state.graph.verticalLabels}
             </Svg>
         );
     }
