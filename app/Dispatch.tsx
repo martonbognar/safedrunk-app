@@ -3,11 +3,26 @@ import {View, Button} from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
+
 import Sessions from './Sessions';
 import Try from './scenes/Try';
+import Settings from './scenes/Settings';
+import Login from './forms/Login';
 
-class Dispatch extends Component {
-  constructor(props) {
+interface DispatchState {
+  token: String;
+  email: String;
+  loggedIn: Boolean;
+}
+
+interface DispatchProps {
+  navigation: {
+    navigate: Function;
+  };
+}
+
+class Dispatch extends Component<DispatchProps, DispatchState> {
+  constructor(props: Readonly<DispatchProps>) {
     super(props);
     this.state = {
       token: '',
@@ -18,7 +33,7 @@ class Dispatch extends Component {
     this.getDataFromStorage = this.getDataFromStorage.bind(this);
   }
 
-  componentDidMount() {
+  componentDidMount(): void {
     this.getDataFromStorage().then(() =>
       fetch('https://safedrunk.com/api/personal', {
         headers: {
@@ -26,7 +41,7 @@ class Dispatch extends Component {
         },
       }).then(response => {
         if (response.status === 200) {
-          //   this.setState({loggedIn: true});
+          this.setState({loggedIn: true});
         }
       }),
     );
@@ -70,9 +85,11 @@ const Stack = createStackNavigator();
 export default function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator>
+      <Stack.Navigator initialRouteName="Try">
         <Stack.Screen name="Dispatch" component={Dispatch} />
         <Stack.Screen name="Try" component={Try} />
+        <Stack.Screen name="Settings" component={Settings} />
+        <Stack.Screen name="Login" component={Login} />
       </Stack.Navigator>
     </NavigationContainer>
   );
