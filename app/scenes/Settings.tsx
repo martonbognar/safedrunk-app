@@ -1,24 +1,41 @@
 import React, {Component} from 'react';
 import {Text, View, Button, TextInput, Picker} from 'react-native';
-import {WEIGHTS} from '../data/Units';
+import BasicData from '../data/BasicData';
+import { WeightUnit, weightUnitToString } from '../data/Units';
 
-export default class Settings extends Component {
-  constructor(props) {
+interface SettingsProps {
+  navigation: {
+    navigate: Function;
+    goBack: Function;
+  };
+  route: {
+    params: {
+      onSave: Function;
+      basicData: BasicData;
+    }
+  }
+}
+
+interface SettingsState extends BasicData {}
+
+export default class Settings extends Component<SettingsProps, SettingsState> {
+  constructor(props: Readonly<SettingsProps>) {
     super(props);
-    const {navigation} = this.props;
-    const basicData = navigation.getParam('basicData', {
-      sex: 'fail',
-      weight: '0',
-      weightUnit: 'kg',
-    });
+    const {route} = this.props;
+    const {basicData} = route.params;
     this.state = basicData;
   }
 
   componentWillUnmount() {
-    this.props.navigation.state.params.onSave(this.state);
+    this.props.route.params.onSave(this.state);
   }
 
   render() {
+    const weightUnitPicker = [];
+    for (let unit in WeightUnit) {
+      weightUnitPicker.push(<Picker.Item label={weightUnitToString(WeightUnit[unit])} value={unit} />)
+    }
+
     return (
       <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
         <Picker
@@ -35,7 +52,7 @@ export default class Settings extends Component {
             keyboardType="numeric"
             value={this.state.weight.toString()}
             onChangeText={text =>
-              this.setState({weight: text}, this.updateList)
+              this.setState({weight: parseFloat(text)})
             }
           />
         </View>
@@ -43,9 +60,7 @@ export default class Settings extends Component {
           selectedValue={this.state.weightUnit}
           style={{height: 50, width: 200}}
           onValueChange={itemValue => this.setState({weightUnit: itemValue})}>
-          <Picker.Item label="Kg" value="kg" />
-          <Picker.Item label="Lbs" value="lbs" />
-          <Picker.Item label="Stone" value="stone" />
+          {weightUnitPicker}
         </Picker>
         <Button
           title="Go back"

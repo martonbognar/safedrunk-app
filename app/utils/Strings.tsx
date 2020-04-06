@@ -1,4 +1,4 @@
-function intervalToText(date) {
+function intervalToText(date: Date): string {
   const diff = Math.floor((new Date().getTime() - date.getTime()) / 1000);
 
   if (diff < 0) {

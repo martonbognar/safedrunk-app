@@ -6,7 +6,11 @@ import {
 } from './data/EffectList';
 import {View, Text, FlatList} from 'react-native';
 
-export default class Effects extends Component {
+interface EffectsProps {
+  percentage: number;
+}
+
+export default class Effects extends Component<EffectsProps, {}> {
   render() {
     const intoxicationLevel = getIntoxicationLevel(this.props.percentage);
     const behaviorList = getBehaviorForIntoxication(intoxicationLevel);

@@ -1,31 +1,37 @@
 import React, {Component} from 'react';
-import {View, FlatList, Button} from 'react-native';
+import {View, FlatList, Button, Alert} from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 
-import Drink from '../Drink';
+import DrinkComponent from '../Drink';
+import Drink from '../data/Drink';
 import Calculator from '../Calculator';
-import {
-  WeightUnit,
-  weightUnitToString,
-  weightToKg,
-  VolumeUnit,
-  volumeUnitToString,
-  volumeToCl,
-} from '../data/Units';
+import {WeightUnit, Sex} from '../data/Units';
+import BasicData from '../data/BasicData';
 
-export default class Try extends Component {
-  constructor(props) {
+interface LightState {
+  drinks: Drink[];
+  keygen: number;
+  basicData: BasicData;
+  showNewDrink: boolean;
+}
+
+interface LightProps {
+  navigation: {
+    navigate: Function;
+  };
+}
+
+export default class Try extends Component<LightProps, LightState> {
+  constructor(props: Readonly<LightProps>) {
     super(props);
     this.state = {
-      beverages: [],
-      filter: '',
       drinks: [],
       keygen: 0,
-      showNewDrink: 'none',
+      showNewDrink: false,
       basicData: {
-        sex: 'female',
+        sex: Sex.Female,
         weight: 60,
-        weightUnit: 'kg',
+        weightUnit: WeightUnit.Kg,
       },
     };
 
@@ -35,9 +41,9 @@ export default class Try extends Component {
     this.duplicateDrink = this.duplicateDrink.bind(this);
     this.submitDrink = this.submitDrink.bind(this);
     this.toggleDrinkForm = this.toggleDrinkForm.bind(this);
-    this.cancelDrinkForm = this.cancelDrinkForm.bind(this);
-    //this.addDrinkComponent = this.addDrinkComponent.bind(this);
+  }
 
+  componentDidMount() {
     this.getDataFromStorage();
   }
 
@@ -48,78 +54,49 @@ export default class Try extends Component {
         this.setState({basicData: JSON.parse(value)});
       }
     } catch (e) {
-      this.myAlert('', e.toString());
-      // error reading value
+      Alert.alert('', e.toString());
     }
   }
 
-  async updateBasicData(basicData) {
+  async updateBasicData(basicData: BasicData) {
     this.setState({basicData: basicData});
     try {
       await AsyncStorage.setItem('basicData', JSON.stringify(basicData));
     } catch (e) {
-      // saving errorhttps://github.com/react-native-community/react-native-device-info#getdevicename
+      Alert.alert('', e.toString());
     }
   }
 
-  removeDrink(drink) {
+  removeDrink(drink: Drink) {
     let index = -1;
     this.state.drinks.forEach(function(d, i) {
-      if (d.key === drink.id) {
+      if (d.key === drink.key) {
         index = i;
       }
     });
     const tempDrinks = this.state.drinks;
     tempDrinks.splice(index, 1);
-    this.setState({drinks: tempDrinks}, this.saveDrinks);
+    this.setState({drinks: tempDrinks});
   }
 
-  duplicateDrink(drink) {
-    this.submitDrink({
-      name: drink.name,
-      amount: drink.amount,
-      percentage: drink.percentage,
-      unit: drink.unit,
-      startTime: new Date(),
-    });
+  duplicateDrink(drink: Drink) {
+    let drinkCopy = Object.assign({}, drink);
+    drinkCopy.startTime = new Date();
+    this.submitDrink(drinkCopy);
   }
 
-  submitDrink(item) {
-    let self = this;
+  submitDrink(drink: Drink) {
+    drink.key = this.state.keygen.toString();
+    drink.id = this.state.keygen;
     this.setState({
-      drinks: self.state.drinks.concat([
-        {
-          key: self.state.keygen.toString(),
-          name: item.name,
-          percentage: item.percentage,
-          amount: 5,
-          unit: 'dl',
-          startTime: new Date(),
-        },
-      ]),
-      keygen: self.state.keygen + 1,
+      drinks: this.state.drinks.concat([drink]),
+      keygen: this.state.keygen + 1,
     });
   }
 
-  toggleDrinkForm(param) {
-    this.setState({showNewDrink: param});
+  toggleDrinkForm() {
+    this.setState({showNewDrink: !this.state.showNewDrink});
   }
-
-  cancelDrinkForm() {
-    this.setState({showNewDrink: 'none'});
-  }
-
-  // addDrinkComponent() {
-  //   switch (this.state.showNewDrink) {
-  //     case 'none':
-  //       return <View>
-  //         <Button title="Quick add" onPress={() => this.toggleDrinkForm('quick')} />
-  //         <Button title="Beverage list" onPress={() => this.toggleDrinkForm('default')} />
-  //       </View>;
-  //     case 'quick': return <QuickNewDrink onChange={this.submitDrink} cancel={this.cancelDrinkForm} />;
-  //     default: return <DefaultNewDrink onChange={this.submitDrink} cancel={this.cancelDrinkForm} />;
-  //   }
-  // }
 
   render() {
     const self = this;
@@ -131,8 +108,6 @@ export default class Try extends Component {
           title="My Quick add"
           onPress={() =>
             this.props.navigation.navigate('Quick add', {
-              previousBeverage:
-                self.state.drinks.length === 0 ? null : drinks[0],
               onSave: self.submitDrink,
             })
           }
@@ -166,12 +141,14 @@ export default class Try extends Component {
         <FlatList
           data={this.state.drinks}
           renderItem={({item}) => (
-            <Drink
+            <DrinkComponent
               key={item.key}
-              id={item.key}
+              id={item.id}
               name={item.name}
               percentage={item.percentage}
               startTime={item.startTime}
+              unit={item.unit}
+              volume={item.volume}
               onRemove={this.removeDrink}
               onDuplicate={this.duplicateDrink}
             />
@@ -179,11 +156,7 @@ export default class Try extends Component {
         />
         <Calculator
           drinks={this.state.drinks}
-          weight={weightToKg(
-            this.state.basicData.weight,
-            this.state.basicData.weightUnit,
-          )}
-          sex={this.state.basicData.sex}
+          basicData={this.state.basicData}
         />
       </View>
     );

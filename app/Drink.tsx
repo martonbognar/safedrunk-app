@@ -1,11 +1,9 @@
 import React, {Component} from 'react';
 import {Text, Button, View} from 'react-native';
-import {intervalToText} from './utils/strings.js';
+import {intervalToText} from './utils/Strings';
+import IDrink from './data/Drink';
 
-interface DrinkProps {
-  startTime: Date;
-  name: string;
-  percentage: number;
+interface DrinkProps extends IDrink {
   onRemove: Function;
   onDuplicate: Function;
 }

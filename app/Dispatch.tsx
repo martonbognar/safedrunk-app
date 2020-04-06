@@ -8,6 +8,8 @@ import Sessions from './Sessions';
 import Try from './scenes/Try';
 import Settings from './scenes/Settings';
 import Login from './forms/Login';
+import QuickAdd from './forms/QuickAdd';
+import DefaultNewDrink from './forms/Default';
 
 interface DispatchState {
   token: String;
@@ -90,6 +92,8 @@ export default function App() {
         <Stack.Screen name="Try" component={Try} />
         <Stack.Screen name="Settings" component={Settings} />
         <Stack.Screen name="Login" component={Login} />
+        <Stack.Screen name="Quick add" component={QuickAdd} />
+        <Stack.Screen name="Beverage list" component={DefaultNewDrink} />
       </Stack.Navigator>
     </NavigationContainer>
   );

@@ -1,3 +1,8 @@
+enum Sex {
+  Female,
+  Male,
+}
+
 enum WeightUnit {
   Kg,
   Lbs,
@@ -65,6 +70,7 @@ function volumeToCl(amount: number, unit: VolumeUnit): number {
 }
 
 export {
+  Sex,
   WeightUnit,
   weightUnitToString,
   weightToKg,
