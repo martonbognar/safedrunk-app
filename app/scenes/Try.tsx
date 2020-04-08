@@ -1,12 +1,12 @@
-import React, {Component} from 'react';
-import {View, FlatList, Button, Alert} from 'react-native';
+import React, { Component } from 'react';
+import { View, FlatList, Button, Alert } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 
 import DrinkComponent from '../Drink';
 import Drink from '../data/Drink';
 import Calculator from '../Calculator';
-import {WeightUnit, Sex} from '../data/Units';
-import BasicData from '../data/BasicData';
+import { WeightUnit, Sex } from '../data/Units';
+import BasicData, { getBasicDataFromStorage } from '../data/BasicData';
 
 interface LightState {
   drinks: Drink[];
@@ -35,8 +35,7 @@ export default class Try extends Component<LightProps, LightState> {
       },
     };
 
-    this.getDataFromStorage = this.getDataFromStorage.bind(this);
-    this.updateBasicData = this.updateBasicData.bind(this);
+    this.loadBasicData = this.loadBasicData.bind(this);
     this.removeDrink = this.removeDrink.bind(this);
     this.duplicateDrink = this.duplicateDrink.bind(this);
     this.submitDrink = this.submitDrink.bind(this);
@@ -44,39 +43,27 @@ export default class Try extends Component<LightProps, LightState> {
   }
 
   componentDidMount() {
-    this.getDataFromStorage();
+    this.loadBasicData();
   }
 
-  async getDataFromStorage() {
-    try {
-      const value = await AsyncStorage.getItem('basicData');
-      if (value !== null) {
-        this.setState({basicData: JSON.parse(value)});
+  loadBasicData() {
+    getBasicDataFromStorage().then(data => {
+      if (data !== null) {
+        this.setState({ basicData: data });
       }
-    } catch (e) {
-      Alert.alert('', e.toString());
-    }
-  }
-
-  async updateBasicData(basicData: BasicData) {
-    this.setState({basicData: basicData});
-    try {
-      await AsyncStorage.setItem('basicData', JSON.stringify(basicData));
-    } catch (e) {
-      Alert.alert('', e.toString());
-    }
+    }).catch(e => Alert.alert('', e.toString()));
   }
 
   removeDrink(drink: Drink) {
     let index = -1;
-    this.state.drinks.forEach(function(d, i) {
+    this.state.drinks.forEach(function (d, i) {
       if (d.key === drink.key) {
         index = i;
       }
     });
     const tempDrinks = this.state.drinks;
     tempDrinks.splice(index, 1);
-    this.setState({drinks: tempDrinks});
+    this.setState({ drinks: tempDrinks });
   }
 
   duplicateDrink(drink: Drink) {
@@ -95,7 +82,7 @@ export default class Try extends Component<LightProps, LightState> {
   }
 
   toggleDrinkForm() {
-    this.setState({showNewDrink: !this.state.showNewDrink});
+    this.setState({ showNewDrink: !this.state.showNewDrink });
   }
 
   render() {
@@ -126,8 +113,7 @@ export default class Try extends Component<LightProps, LightState> {
           title="Go to Settings"
           onPress={() =>
             this.props.navigation.navigate('Settings', {
-              basicData: self.state.basicData,
-              onSave: self.updateBasicData,
+              onSave: self.loadBasicData,
             })
           }
         />
@@ -137,10 +123,10 @@ export default class Try extends Component<LightProps, LightState> {
           onPress={() => this.props.navigation.navigate('Login')}
         />
 
-        <View style={{borderWidth: 0.5, borderColor: 'black', margin: 10}} />
+        <View style={{ borderWidth: 0.5, borderColor: 'black', margin: 10 }} />
         <FlatList
           data={this.state.drinks}
-          renderItem={({item}) => (
+          renderItem={({ item }) => (
             <DrinkComponent
               key={item.key}
               id={item.id}
