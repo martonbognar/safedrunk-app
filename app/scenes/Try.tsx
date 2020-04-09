@@ -1,12 +1,11 @@
 import React, { Component } from 'react';
 import { View, FlatList, Button, Alert } from 'react-native';
-import AsyncStorage from '@react-native-community/async-storage';
 
 import DrinkComponent from '../Drink';
 import Drink from '../data/Drink';
 import Calculator from '../Calculator';
 import { WeightUnit, Sex } from '../data/Units';
-import BasicData, { getBasicDataFromStorage } from '../data/BasicData';
+import { BasicData, getBasicDataFromStorage } from '../data/BasicData';
 
 interface LightState {
   drinks: Drink[];
@@ -18,7 +17,13 @@ interface LightState {
 interface LightProps {
   navigation: {
     navigate: Function;
+    setParams: Function;
   };
+  route: {
+    params: {
+      drink: Drink;
+    }
+  }
 }
 
 export default class Try extends Component<LightProps, LightState> {
@@ -44,6 +49,13 @@ export default class Try extends Component<LightProps, LightState> {
 
   componentDidMount() {
     this.loadBasicData();
+  }
+
+  componentDidUpdate() {
+    if (this.props.route.params?.drink !== undefined) {
+      this.submitDrink(this.props.route.params.drink);
+      this.props.navigation.setParams({ drink: undefined });
+    }
   }
 
   loadBasicData() {
@@ -89,28 +101,8 @@ export default class Try extends Component<LightProps, LightState> {
     const self = this;
     return (
       <View>
-        {/* {this.addDrinkComponent()} */}
-
         <Button
-          title="My Quick add"
-          onPress={() =>
-            this.props.navigation.navigate('Quick add', {
-              onSave: self.submitDrink,
-            })
-          }
-        />
-
-        <Button
-          title="Beverage list"
-          onPress={() =>
-            this.props.navigation.navigate('Beverage list', {
-              onSave: self.submitDrink,
-            })
-          }
-        />
-
-        <Button
-          title="Go to Settings"
+          title="Settings"
           onPress={() =>
             this.props.navigation.navigate('Settings', {
               onSave: self.loadBasicData,
@@ -119,9 +111,16 @@ export default class Try extends Component<LightProps, LightState> {
         />
 
         <Button
+          title="+ New drink"
+          onPress={() =>
+            this.props.navigation.navigate('DrinkAdd')
+          }
+        />
+
+        {/* <Button
           title="Login"
           onPress={() => this.props.navigation.navigate('Login')}
-        />
+        /> */}
 
         <View style={{ borderWidth: 0.5, borderColor: 'black', margin: 10 }} />
         <FlatList

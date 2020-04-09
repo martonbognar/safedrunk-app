@@ -7,7 +7,6 @@ import {Sex, WeightUnit} from './data/Units';
 import Drink from './data/Drink';
 
 interface CalculatorState {
-  ebac: number;
 }
 
 interface CalculatorProps {
@@ -23,45 +22,16 @@ export default class Calculator extends Component<
   CalculatorProps,
   CalculatorState
 > {
-  timerID: number;
-
-  constructor(props: Readonly<CalculatorProps>) {
-    super(props);
-
-    this.state = {ebac: 0};
-    this.timerID = 0;
-    this.calculate = this.calculate.bind(this);
-  }
-
-  componentDidMount() {
-    this.calculate();
-    this.timerID = setInterval(this.calculate, 5000);
-  }
-
-  componentDidUpdate() {
-    this.calculate();
-  }
-
-  calculate() {
+  render() {
     const ebac = calculateEbac(
       this.props.drinks,
       new Date(),
       this.props.basicData,
     );
-    if (ebac !== this.state.ebac) {
-      this.setState({ebac: ebac});
-    }
-  }
-
-  componentWillUnmount() {
-    clearInterval(this.timerID);
-  }
-
-  render() {
     return (
       <View>
-        <Text>Blood alcohol content: {this.state.ebac}%</Text>
-        <Effects percentage={this.state.ebac} />
+        <Text>Blood alcohol content: {ebac}%</Text>
+        <Effects percentage={ebac} />
         <Graph drinks={this.props.drinks} basicData={this.props.basicData} />
       </View>
     );

@@ -23,11 +23,13 @@ export default class Effects extends Component<EffectsProps, {}> {
         <FlatList
           data={behaviorList}
           renderItem={({item}) => <Text>{item}</Text>}
+          keyExtractor={(item, index) => index.toString()}
         />
         <Text>Impairment</Text>
         <FlatList
           data={impairmentList}
           renderItem={({item}) => <Text>{item}</Text>}
+          keyExtractor={(item, index) => index.toString()}
         />
       </View>
     );

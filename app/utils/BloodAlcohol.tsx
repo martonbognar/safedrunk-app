@@ -1,6 +1,6 @@
 import {Sex, volumeToCl} from '../data/Units';
 import Drink from '../data/Drink';
-import BasicData from '../data/BasicData';
+import {BasicData} from '../data/BasicData';
 
 function firstAndLastTime(drinks: Drink[]): [Date, Date] {
   let firstDot = new Date(drinks[0].startTime.getTime());
@@ -108,6 +108,7 @@ function ebac(
   periodHours: number,
   userData: BasicData,
 ): number {
+  console.log(userData);
   if (periodHours < 0) {
     return 0;
   }

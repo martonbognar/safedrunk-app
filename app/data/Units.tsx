@@ -108,6 +108,8 @@ const volumeUnitStringPairs: [VolumeUnit, string][] = [
   [VolumeUnit.UsPint, "pint (US)"],
 ]
 
+const listOfVolumeUnitValues = listOfEnumValues(volumeUnitStringPairs);
+
 function volumeUnitToString(unit: VolumeUnit): string {
   return enumValueToString(volumeUnitStringPairs, unit);
 }
@@ -142,6 +144,7 @@ export {
   stringToWeightUnit,
   weightToKg,
   VolumeUnit,
+  listOfVolumeUnitValues,
   volumeUnitToString,
   stringToVolumeUnit,
   volumeToCl,

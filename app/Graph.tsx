@@ -1,22 +1,14 @@
-import Svg, {Line, Circle, Path, Text} from 'react-native-svg';
-import React, {Component} from 'react';
-import {ebacSteps} from './utils/BloodAlcohol';
+import Svg, { Line, Circle, Path, Text } from 'react-native-svg';
+import React, { Component } from 'react';
+import { ebacSteps } from './utils/BloodAlcohol';
 
-import {View, ToastAndroid} from 'react-native';
-import BasicData from './data/BasicData';
+import { View, ToastAndroid } from 'react-native';
+import { BasicData } from './data/BasicData';
 import Drink from './data/Drink';
 
 interface GraphProps {
-  userData: BasicData;
+  basicData: BasicData;
   drinks: Drink[];
-}
-
-interface GraphState {
-  data: {
-    values: number[];
-    labels: string[];
-  };
-  graph: {}
 }
 
 interface Point {
@@ -26,42 +18,26 @@ interface Point {
   vLabel: number;
 }
 
-export default class SVGGraph extends Component<GraphProps, GraphState> {
+export default class SVGGraph extends Component<GraphProps, {}> {
   constructor(props: Readonly<GraphProps>) {
     super(props);
 
-    this.state = {
-      // dimensions: null,
-      data: {
-        values: [],
-        labels: [],
-      },
-      graph: {
-        // circles: [],
-        // path: <Path d="" fill="none" stroke="red" />, // don't store JSX in state
-        // lines: [],
-        // horizontalLabels: [],
-        // verticalLabels: [],
-      },
-    };
-
     this.updateGraph = this.updateGraph.bind(this);
-    this.updateSessionData = this.updateSessionData.bind(this);
+    this.getData = this.getData.bind(this);
   }
 
-  updateSessionData() {
-    const data = ebacSteps(this.props.drinks, this.props.userData);
+  getData(): { values: number[]; labels: string[] } {
+    // console.log(this.props.basicData);
+    const data = ebacSteps(this.props.drinks, this.props.basicData);
 
     if (data.comeDown !== null) {
       data.points.push(data.comeDown);
     }
 
-    this.setState({
-      data: {
-        values: data.points,
-        labels: data.labels,
-      },
-    });
+    return {
+      values: data.points,
+      labels: data.labels,
+    };
   }
 
   calculatePath(coords: Point[]): string {
@@ -75,12 +51,8 @@ export default class SVGGraph extends Component<GraphProps, GraphState> {
     return pathData;
   }
 
-  updateGraph() {
-    // TODO: update upon some event outside of component
-    this.updateSessionData();
-
-    const {values} = this.state.data;
-    const {labels} = this.state.data;
+  updateGraph(): {lines: Element[]; verticalLabels: Element[]; circles: Element[]; horizontalLabels: Element[]} {
+    const { values, labels } = this.getData();
 
     const maxValue = Math.max(...values);
     //const bottomLabelHeight = 90;    // percent
@@ -88,7 +60,12 @@ export default class SVGGraph extends Component<GraphProps, GraphState> {
     const canvasSize = 100 - headerSize;
 
     if (labels.length == 0) {
-      return;
+      return {
+        lines: [],
+        verticalLabels: [],
+        circles: [],
+        horizontalLabels: [],
+      };
     }
 
     const points = labels.map((val, idx) => {
@@ -122,47 +99,29 @@ export default class SVGGraph extends Component<GraphProps, GraphState> {
     }
 
     if (points.length < 2) {
-      this.setState({
-        graph: {
-          lines: lines,
-          verticalLabels: lineLabels,
-        },
-      });
-      return;
+      return {
+        lines: lines,
+        verticalLabels: lineLabels,
+        circles: [],
+        horizontalLabels: [],
+      };
     }
 
     //console.log(JSON.stringify(dimensions));
 
     const pathData = this.calculatePath(points);
 
-    this.setState({
-      graph: {
-        circles: points.map((val, idx) => {
-          return <Circle cx={`${val.x}%`} cy={`${val.y}%`} r="2" fill="red" />;
-        }),
-
-        //path: <Path d="M 10 10 L 55 10 z" fill="none" stroke="red" vector-effect="non-scaling-stroke"/>,
-
-        horizontalLabels: points.map((val, idx) => {
-          return (
-            <Text stroke="black" x={`${val.x}%`} y="100%">
-              {val.hLabel}
-            </Text>
-          );
-        }),
-
-        lines: lines,
-        verticalLabels: lineLabels,
-      },
-    });
-  }
-
-  componentDidMount() {
-    this.updateGraph();
-    setInterval(this.updateGraph, 5000); // TODO: not this
+    return {
+      circles: points.map((val, idx) => <Circle cx={`${val.x}%`} cy={`${val.y}%`} r="2" fill="red" />),
+      //path: <Path d="M 10 10 L 55 10 z" fill="none" stroke="red" vector-effect="non-scaling-stroke"/>,
+      horizontalLabels: points.map((val, idx) => <Text stroke="black" x={`${val.x}%`} y="100%">{val.hLabel}</Text>),
+      lines: lines,
+      verticalLabels: lineLabels,
+    };
   }
 
   render() {
+    const {lines, verticalLabels, circles, horizontalLabels} = this.updateGraph();
     return (
       // <View width='100%' height="30%">
       // <Svg width='100%' height="100%" viewBox="0 0 100 100" preserveAspectRatio="none">
@@ -175,11 +134,11 @@ export default class SVGGraph extends Component<GraphProps, GraphState> {
       // </View>
 
       <Svg width="100%" height="30%">
-        {this.state.graph.lines}
-        {this.state.graph.circles}
-        {/* {this.state.graph.path} */}
-        {this.state.graph.horizontalLabels}
-        {this.state.graph.verticalLabels}
+        {lines}
+        {circles}
+        {/* {path} */}
+        {horizontalLabels}
+        {verticalLabels}
       </Svg>
     );
   }
