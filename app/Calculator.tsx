@@ -4,7 +4,7 @@ import Effects from './Effects';
 import Graph from './Graph';
 import {View, Text} from 'react-native';
 import {Sex, WeightUnit} from './data/Units';
-import Drink from './data/Drink';
+import {IDrink} from './data/Drink';
 
 interface CalculatorState {
 }
@@ -15,7 +15,7 @@ interface CalculatorProps {
     weight: number;
     weightUnit: WeightUnit;
   };
-  drinks: Drink[];
+  drinks: IDrink[];
 }
 
 export default class Calculator extends Component<

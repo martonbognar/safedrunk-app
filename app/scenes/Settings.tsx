@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Text, View, Button, TextInput, Picker, Alert } from 'react-native';
-import { BasicData, getBasicDataFromStorage, saveBasicDataToStorage } from '../data/BasicData';
+import { IBasicData, getBasicDataFromStorage, saveBasicDataToStorage } from '../data/BasicData';
 import { WeightUnit, weightUnitToString, Sex, listOfSexValues, sexToString, listOfWeightUnitValues } from '../data/Units';
 
 interface SettingsProps {
@@ -15,7 +15,7 @@ interface SettingsProps {
   }
 }
 
-interface SettingsState extends BasicData { }
+interface SettingsState extends IBasicData { }
 
 export default class Settings extends Component<SettingsProps, SettingsState> {
   constructor(props: Readonly<SettingsProps>) {

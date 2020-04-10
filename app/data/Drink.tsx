@@ -1,7 +1,7 @@
 import { VolumeUnit, sexToString, weightUnitToString, volumeUnitToString, stringToVolumeUnit } from './Units';
 import AsyncStorage from '@react-native-community/async-storage';
 
-interface Drink {
+interface IDrink {
   key: string;
   id: number;
   name: string;
@@ -11,7 +11,7 @@ interface Drink {
   volume: number;
 }
 
-async function saveDrinksToStore(drinks: Drink[]) {
+async function saveDrinksToStore(drinks: IDrink[]) {
   return AsyncStorage.setItem('drinks', JSON.stringify(drinks.map(d => ({
     key: d.key,
     id: d.id,
@@ -23,13 +23,13 @@ async function saveDrinksToStore(drinks: Drink[]) {
   }))));
 }
 
-async function saveDrinkToStore(drink: Drink) {
+async function saveDrinkToStore(drink: IDrink) {
   const drinks = await loadDrinksFromStore();
   drinks.push(drink);
   return saveDrinksToStore(drinks);
 }
 
-async function deleteDrinkFromStore(drink: Drink) {
+async function deleteDrinkFromStore(drink: IDrink) {
   const drinks = await loadDrinksFromStore();
 
   let index = -1;
@@ -43,7 +43,7 @@ async function deleteDrinkFromStore(drink: Drink) {
   return saveDrinksToStore(drinks);
 }
 
-async function loadDrinksFromStore(): Promise<Drink[]> {
+async function loadDrinksFromStore(): Promise<IDrink[]> {
   const drinksString = await AsyncStorage.getItem('drinks');
   if (drinksString === null) {
     return [];
@@ -61,5 +61,5 @@ async function loadDrinksFromStore(): Promise<Drink[]> {
   }
 }
 
-export type { Drink };
+export type { IDrink };
 export { saveDrinkToStore, deleteDrinkFromStore, loadDrinksFromStore };

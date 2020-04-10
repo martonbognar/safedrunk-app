@@ -1,13 +1,13 @@
 import { WeightUnit, Sex, sexToString, weightUnitToString, stringToSex, stringToWeightUnit } from './Units';
 import AsyncStorage from '@react-native-community/async-storage';
 
-interface BasicData {
+interface IBasicData {
   sex: Sex;
   weight: number;
   weightUnit: WeightUnit;
 }
 
-async function saveBasicDataToStorage(basicData: BasicData): Promise<void> {
+async function saveBasicDataToStorage(basicData: IBasicData): Promise<void> {
   try {
     await AsyncStorage.setItem('basicData', JSON.stringify({
       sex: sexToString(basicData.sex),
@@ -19,7 +19,7 @@ async function saveBasicDataToStorage(basicData: BasicData): Promise<void> {
   }
 }
 
-async function getBasicDataFromStorage(): Promise<(BasicData | null)> {
+async function getBasicDataFromStorage(): Promise<(IBasicData | null)> {
   const value = await AsyncStorage.getItem('basicData');
   if (value === null) {
     return null;
@@ -35,5 +35,5 @@ async function getBasicDataFromStorage(): Promise<(BasicData | null)> {
 }
 
 
-export type { BasicData };
+export type { IBasicData };
 export { saveBasicDataToStorage, getBasicDataFromStorage };

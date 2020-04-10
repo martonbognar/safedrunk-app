@@ -27,6 +27,7 @@ interface DrinkAddState {
   beverageId: null | number;
   keyword: string;
   stage: Selection;
+  loading: boolean;
 }
 
 interface DrinkAddProps {
@@ -63,6 +64,7 @@ export default class DefaultNewDrink extends Component<DrinkAddProps, DrinkAddSt
       keyword: '',
       modifyStart: false,
       stage: Selection.Initial,
+      loading: false,
     };
 
     this.handlePercentageChange = this.handlePercentageChange.bind(this);
@@ -99,7 +101,7 @@ export default class DefaultNewDrink extends Component<DrinkAddProps, DrinkAddSt
 
   handleKeywordChange(input: string): void {
     const keyword = input.trim();
-    this.setState({ keyword: keyword });
+    this.setState({ keyword: keyword, loading: true });
 
     if (keyword !== '') {
       const self = this;
@@ -109,13 +111,14 @@ export default class DefaultNewDrink extends Component<DrinkAddProps, DrinkAddSt
         .then(response => {
           self.setState({ beverageList: response });
           if (response.length === 0) {
-            self.setState({ beverageId: null });
+            self.setState({ beverageId: null, loading: false });
           } else {
             const beverage = response[0];
             self.setState({
               name: beverage.name,
               beveragePercentage: beverage.percentage,
               beverageId: beverage.id,
+              loading: false,
             });
           }
         })
@@ -167,6 +170,15 @@ export default class DefaultNewDrink extends Component<DrinkAddProps, DrinkAddSt
       />,
     );
 
+    let picker = this.state.loading ?
+        <Text>Loading...</Text>
+      :
+      <Picker
+        selectedValue={this.state.beverageId}
+        onValueChange={this.handleBeverageChange}>
+        {drinks}
+      </Picker>;
+
     const hairline = {
       backgroundColor: '#A2A2A2',
       height: 2,
@@ -199,11 +211,7 @@ export default class DefaultNewDrink extends Component<DrinkAddProps, DrinkAddSt
           onChangeText={this.handleKeywordChange}
         />
 
-        <Picker
-          selectedValue={this.state.beverageId}
-          onValueChange={this.handleBeverageChange}>
-          {drinks}
-        </Picker>
+        {picker}
 
         <Button title="Continue" onPress={() => this.setState({ stage: Selection.Beverage })} />
       </View>

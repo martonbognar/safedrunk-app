@@ -2,16 +2,15 @@ import Svg, { Line, Circle, Path, Text } from 'react-native-svg';
 import React, { Component } from 'react';
 import { ebacSteps } from './utils/BloodAlcohol';
 
-import { View, ToastAndroid } from 'react-native';
-import { BasicData } from './data/BasicData';
-import Drink from './data/Drink';
+import { IBasicData } from './data/BasicData';
+import { IDrink } from './data/Drink';
 
 interface GraphProps {
-  basicData: BasicData;
-  drinks: Drink[];
+  basicData: IBasicData;
+  drinks: IDrink[];
 }
 
-interface Point {
+interface IPoint {
   x: number;
   y: number;
   hLabel: string;
@@ -51,7 +50,7 @@ export default class SVGGraph extends Component<GraphProps, {}> {
     return pathData;
   }
 
-  updateGraph(): {lines: Element[]; verticalLabels: Element[]; circles: Element[]; horizontalLabels: Element[]} {
+  updateGraph(): { lines: Element[]; verticalLabels: Element[]; circles: Element[]; horizontalLabels: Element[] } {
     const { values, labels } = this.getData();
 
     const maxValue = Math.max(...values);
@@ -121,7 +120,7 @@ export default class SVGGraph extends Component<GraphProps, {}> {
   }
 
   render() {
-    const {lines, verticalLabels, circles, horizontalLabels} = this.updateGraph();
+    const { lines, verticalLabels, circles, horizontalLabels } = this.updateGraph();
     return (
       // <View width='100%' height="30%">
       // <Svg width='100%' height="100%" viewBox="0 0 100 100" preserveAspectRatio="none">

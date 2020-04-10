@@ -1,8 +1,8 @@
 import {Sex, volumeToCl} from '../data/Units';
-import Drink from '../data/Drink';
-import {BasicData} from '../data/BasicData';
+import {IDrink} from '../data/Drink';
+import {IBasicData} from '../data/BasicData';
 
-function firstAndLastTime(drinks: Drink[]): [Date, Date] {
+function firstAndLastTime(drinks: IDrink[]): [Date, Date] {
   let firstDot = new Date(drinks[0].startTime.getTime());
   let lastDot = new Date(drinks[drinks.length - 1].startTime.getTime());
 
@@ -28,8 +28,8 @@ function prettyPrintHoursMinutes(date: Date): string {
 }
 
 function ebacSteps(
-  drinks: Drink[],
-  userData: BasicData,
+  drinks: IDrink[],
+  userData: IBasicData,
 ): {labels: string[]; points: number[]; comeDown: number | null} {
   const labels: string[] = [];
   const points: number[] = [];
@@ -75,9 +75,9 @@ function ebacSteps(
 }
 
 function calculateEbac(
-  drinks: Drink[],
+  drinks: IDrink[],
   endTime: Date,
-  userData: BasicData,
+  userData: IBasicData,
 ): number {
   if (drinks.length === 0) {
     return 0;
@@ -106,7 +106,7 @@ function calculateEbac(
 function ebac(
   alcoholGrams: number,
   periodHours: number,
-  userData: BasicData,
+  userData: IBasicData,
 ): number {
   console.log(userData);
   if (periodHours < 0) {

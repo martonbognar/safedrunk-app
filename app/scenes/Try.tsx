@@ -2,15 +2,15 @@ import React, { Component } from 'react';
 import { View, FlatList, Button, Alert } from 'react-native';
 
 import DrinkComponent from '../Drink';
-import { Drink, loadDrinksFromStore, deleteDrinkFromStore, saveDrinkToStore } from '../data/Drink';
+import { IDrink, loadDrinksFromStore, deleteDrinkFromStore, saveDrinkToStore } from '../data/Drink';
 import Calculator from '../Calculator';
 import { WeightUnit, Sex } from '../data/Units';
-import { BasicData, getBasicDataFromStorage } from '../data/BasicData';
+import { IBasicData, getBasicDataFromStorage } from '../data/BasicData';
 
 interface LightState {
-  drinks: Drink[];
+  drinks: IDrink[];
   keygen: number;
-  basicData: BasicData;
+  basicData: IBasicData;
   showNewDrink: boolean;
 }
 
@@ -21,7 +21,7 @@ interface LightProps {
   };
   route: {
     params: {
-      drink: Drink;
+      drink: IDrink;
     }
   }
 }
@@ -72,7 +72,7 @@ export default class Try extends Component<LightProps, LightState> {
     loadDrinksFromStore().then(drinks => this.setState({ drinks: drinks }));
   }
 
-  removeDrink(drink: Drink) {
+  removeDrink(drink: IDrink) {
     let index = -1;
     this.state.drinks.forEach(function (d, i) {
       if (d.key === drink.key) {
@@ -84,13 +84,13 @@ export default class Try extends Component<LightProps, LightState> {
     deleteDrinkFromStore(drink).then(_ => this.setState({ drinks: tempDrinks }));
   }
 
-  duplicateDrink(drink: Drink) {
+  duplicateDrink(drink: IDrink) {
     let drinkCopy = Object.assign({}, drink);
     drinkCopy.startTime = new Date();
     this.submitDrink(drinkCopy);
   }
 
-  submitDrink(drink: Drink) {
+  submitDrink(drink: IDrink) {
     drink.key = this.state.keygen.toString();
     drink.id = this.state.keygen;
     saveDrinkToStore(drink).then(_ => this.setState({

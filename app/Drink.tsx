@@ -1,7 +1,8 @@
 import React, {Component} from 'react';
 import {Text, Button, View} from 'react-native';
 import {intervalToText} from './utils/Strings';
-import IDrink from './data/Drink';
+import {IDrink} from './data/Drink';
+import { volumeUnitToString } from './data/Units';
 
 interface DrinkProps extends IDrink {
   onRemove: Function;
@@ -54,7 +55,7 @@ export default class Drink extends Component<DrinkProps, DrinkState> {
     return (
       <View>
         <Text>
-          {this.props.name} ({this.props.percentage}%) · {this.state.timeText}
+          {this.props.volume} {volumeUnitToString(this.props.unit)} of {this.props.name} ({this.props.percentage}%) · {this.state.timeText}
         </Text>
         <Button title="+" onPress={this.duplicate} />
         <Button title="-" onPress={this.remove} />
