@@ -11,7 +11,7 @@ interface LightState {
   drinks: IDrink[];
   keygen: number;
   basicData: IBasicData;
-  showNewDrink: boolean;
+  currentTime: Date;
 }
 
 interface LightProps {
@@ -27,30 +27,39 @@ interface LightProps {
 }
 
 export default class Try extends Component<LightProps, LightState> {
+  interval: number;
+
   constructor(props: Readonly<LightProps>) {
     super(props);
     this.state = {
       drinks: [],
       keygen: 0,
-      showNewDrink: false,
       basicData: {
         sex: Sex.Female,
         weight: 60,
         weightUnit: WeightUnit.Kg,
       },
+      currentTime: new Date(),
     };
+
+    this.interval = -1;
 
     this.loadBasicData = this.loadBasicData.bind(this);
     this.loadDrinks = this.loadDrinks.bind(this);
     this.removeDrink = this.removeDrink.bind(this);
     this.duplicateDrink = this.duplicateDrink.bind(this);
     this.submitDrink = this.submitDrink.bind(this);
-    this.toggleDrinkForm = this.toggleDrinkForm.bind(this);
   }
 
   componentDidMount() {
     this.loadBasicData();
     this.loadDrinks();
+    const self = this;
+    this.interval = setInterval(() => self.setState({ currentTime: new Date() }), 10000);
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.interval);
   }
 
   componentDidUpdate() {
@@ -99,10 +108,6 @@ export default class Try extends Component<LightProps, LightState> {
     }));
   }
 
-  toggleDrinkForm() {
-    this.setState({ showNewDrink: !this.state.showNewDrink });
-  }
-
   render() {
     const self = this;
     return (
@@ -142,12 +147,14 @@ export default class Try extends Component<LightProps, LightState> {
               volume={item.volume}
               onRemove={this.removeDrink}
               onDuplicate={this.duplicateDrink}
+              currentTime={this.state.currentTime}
             />
           )}
         />
         <Calculator
           drinks={this.state.drinks}
           basicData={this.state.basicData}
+          currentTime={this.state.currentTime}
         />
       </View>
     );

@@ -12,6 +12,10 @@ interface EffectsProps {
 
 export default class Effects extends Component<EffectsProps, {}> {
   render() {
+    if (this.props.percentage < 0.001) {
+      return null;
+    }
+
     const intoxicationLevel = getIntoxicationLevel(this.props.percentage);
     const behaviorList = getBehaviorForIntoxication(intoxicationLevel);
     const impairmentList = getImpairmentForIntoxication(intoxicationLevel);

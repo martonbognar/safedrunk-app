@@ -8,6 +8,7 @@ import { IDrink } from './data/Drink';
 interface GraphProps {
   basicData: IBasicData;
   drinks: IDrink[];
+  currentTime: Date;
 }
 
 interface IPoint {
@@ -39,7 +40,7 @@ export default class SVGGraph extends Component<GraphProps, {}> {
     };
   }
 
-  calculatePath(coords: Point[]): string {
+  calculatePath(coords: IPoint[]): string {
     let pathData = `M ${coords[0].x} ${coords[0].y} `;
     for (let i = 1; i < coords.length; ++i) {
       pathData = pathData.concat(
