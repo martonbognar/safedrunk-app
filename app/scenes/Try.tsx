@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { View, FlatList, Button, Alert } from 'react-native';
 
 import DrinkComponent from '../Drink';
-import Drink from '../data/Drink';
+import { Drink, loadDrinksFromStore, deleteDrinkFromStore, saveDrinkToStore } from '../data/Drink';
 import Calculator from '../Calculator';
 import { WeightUnit, Sex } from '../data/Units';
 import { BasicData, getBasicDataFromStorage } from '../data/BasicData';
@@ -41,6 +41,7 @@ export default class Try extends Component<LightProps, LightState> {
     };
 
     this.loadBasicData = this.loadBasicData.bind(this);
+    this.loadDrinks = this.loadDrinks.bind(this);
     this.removeDrink = this.removeDrink.bind(this);
     this.duplicateDrink = this.duplicateDrink.bind(this);
     this.submitDrink = this.submitDrink.bind(this);
@@ -49,6 +50,7 @@ export default class Try extends Component<LightProps, LightState> {
 
   componentDidMount() {
     this.loadBasicData();
+    this.loadDrinks();
   }
 
   componentDidUpdate() {
@@ -66,6 +68,10 @@ export default class Try extends Component<LightProps, LightState> {
     }).catch(e => Alert.alert('', e.toString()));
   }
 
+  loadDrinks() {
+    loadDrinksFromStore().then(drinks => this.setState({ drinks: drinks }));
+  }
+
   removeDrink(drink: Drink) {
     let index = -1;
     this.state.drinks.forEach(function (d, i) {
@@ -75,7 +81,7 @@ export default class Try extends Component<LightProps, LightState> {
     });
     const tempDrinks = this.state.drinks;
     tempDrinks.splice(index, 1);
-    this.setState({ drinks: tempDrinks });
+    deleteDrinkFromStore(drink).then(_ => this.setState({ drinks: tempDrinks }));
   }
 
   duplicateDrink(drink: Drink) {
@@ -87,10 +93,10 @@ export default class Try extends Component<LightProps, LightState> {
   submitDrink(drink: Drink) {
     drink.key = this.state.keygen.toString();
     drink.id = this.state.keygen;
-    this.setState({
+    saveDrinkToStore(drink).then(_ => this.setState({
       drinks: this.state.drinks.concat([drink]),
       keygen: this.state.keygen + 1,
-    });
+    }));
   }
 
   toggleDrinkForm() {
