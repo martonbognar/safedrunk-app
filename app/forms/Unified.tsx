@@ -8,6 +8,7 @@ import {
   Picker,
 } from 'react-native';
 import { VolumeUnit, listOfVolumeUnitValues, volumeUnitToString } from '../data/Units';
+import DateTimePicker from '@react-native-community/datetimepicker';
 
 interface Beverage {
   id: number;
@@ -28,6 +29,7 @@ interface DrinkAddState {
   keyword: string;
   stage: Selection;
   loading: boolean;
+  dateTimeChange: DateTimeChange;
 }
 
 interface DrinkAddProps {
@@ -48,6 +50,12 @@ enum Selection {
   Beverage,
 }
 
+enum DateTimeChange {
+  None,
+  Date,
+  Time,
+}
+
 export default class DefaultNewDrink extends Component<DrinkAddProps, DrinkAddState> {
   constructor(props: Readonly<DrinkAddProps>) {
     super(props);
@@ -65,6 +73,7 @@ export default class DefaultNewDrink extends Component<DrinkAddProps, DrinkAddSt
       modifyStart: false,
       stage: Selection.Initial,
       loading: false,
+      dateTimeChange: DateTimeChange.None,
     };
 
     this.handlePercentageChange = this.handlePercentageChange.bind(this);
@@ -74,6 +83,8 @@ export default class DefaultNewDrink extends Component<DrinkAddProps, DrinkAddSt
     this.handleUnitChange = this.handleUnitChange.bind(this);
     this.submit = this.submit.bind(this);
     this.percentageScreen = this.percentageScreen.bind(this);
+    this.onTimeChanged = this.onTimeChanged.bind(this);
+    this.timeSelector = this.timeSelector.bind(this);
     this.volumeSelectScreen = this.volumeSelectScreen.bind(this);
   }
 
@@ -171,13 +182,16 @@ export default class DefaultNewDrink extends Component<DrinkAddProps, DrinkAddSt
     );
 
     let picker = this.state.loading ?
-        <Text>Loading...</Text>
+      <Text>Loading...</Text>
       :
-      <Picker
-        selectedValue={this.state.beverageId}
-        onValueChange={this.handleBeverageChange}>
-        {drinks}
-      </Picker>;
+      this.state.beverageList.length == 0 ?
+        <Text>No results.</Text>
+        :
+        <Picker
+          selectedValue={this.state.beverageId}
+          onValueChange={this.handleBeverageChange}>
+          {drinks}
+        </Picker>;
 
     const hairline = {
       backgroundColor: '#A2A2A2',
@@ -218,6 +232,31 @@ export default class DefaultNewDrink extends Component<DrinkAddProps, DrinkAddSt
     );
   }
 
+  onTimeChanged(_: any, selectedDate: Date | undefined) {
+    let selected = selectedDate || new Date();
+    // Alert.alert(selected.toISOString());
+    this.setState({ startTime: selected, dateTimeChange: DateTimeChange.None });
+  };
+
+  timeSelector(): Element {
+    if (this.state.dateTimeChange === DateTimeChange.None) {
+      const self = this;
+      return <View>
+        <Button title="Change start date" onPress={_ => self.setState({ dateTimeChange: DateTimeChange.Date })} />
+        <Button title="Change start time" onPress={_ => self.setState({ dateTimeChange: DateTimeChange.Time })} />
+      </View>
+    } else {
+      const mode = this.state.dateTimeChange === DateTimeChange.Date ? 'date' : 'time';
+      return <DateTimePicker
+        value={this.state.startTime}
+        mode={mode}
+        is24Hour={true}
+        display="default"
+        onChange={this.onTimeChanged}
+      />
+    }
+  }
+
   volumeSelectScreen(): Element {
     const unitList = listOfVolumeUnitValues.map(unit => (
       <Picker.Item key={unit} value={unit} label={volumeUnitToString(unit)} />
@@ -237,6 +276,8 @@ export default class DefaultNewDrink extends Component<DrinkAddProps, DrinkAddSt
           onValueChange={this.handleUnitChange}>
           {unitList}
         </Picker>
+
+        {this.timeSelector()}
 
         <Button title="Submit" onPress={this.submit} />
       </View>
