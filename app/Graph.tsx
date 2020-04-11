@@ -1,5 +1,6 @@
 import Svg, { Line, Circle, Path, Text } from 'react-native-svg';
 import React, { Component } from 'react';
+import { View } from 'react-native';
 import { ebacSteps } from './utils/BloodAlcohol';
 
 import { IBasicData } from './data/BasicData';
@@ -40,24 +41,42 @@ export default class SVGGraph extends Component<GraphProps, {}> {
     };
   }
 
+
+  mapValueX (x : number): number {
+    return 450 * (x / 100);
+  }
+
+  mapValueY (x : number): number {
+    return 135 * (x / 100);
+  }
+
+
   calculatePath(coords: IPoint[]): string {
-    let pathData = `M ${coords[0].x} ${coords[0].y} `;
+    const firstX = Math.round(this.mapValueX(coords[0].x));
+    const firstY = Math.round(this.mapValueY(coords[0].y));
+
+    let pathData = `M ${firstX} ${firstY} `;
     for (let i = 1; i < coords.length; ++i) {
+      const X = Math.round(this.mapValueX(coords[i].x));
+      const Y = Math.round(this.mapValueX(coords[i].y));
       pathData = pathData.concat(
-        `L ${Math.round(coords[i].x)} ${Math.round(coords[i].y)} `,
+        `L ${X} ${Y} `,
       );
     }
     pathData = pathData.concat('z');
     return pathData;
   }
 
-  updateGraph(): { lines: Element[]; verticalLabels: Element[]; circles: Element[]; horizontalLabels: Element[] } {
+  updateGraph(): { lines: Element[]; verticalLabels: Element[]; circles: Element[]; horizontalLabels: Element[], path: Element[] } {
     const { values, labels } = this.getData();
 
     const maxValue = Math.max(...values);
-    //const bottomLabelHeight = 90;    // percent
-    const headerSize = 10;
-    const canvasSize = 100 - headerSize;
+
+    const leftPadding = 30;
+    const bottomPadding = 10;
+
+    const canvasWidth = 100 - leftPadding;
+    const canvasHeight = 100 - bottomPadding;
 
     if (labels.length == 0) {
       return {
@@ -65,15 +84,14 @@ export default class SVGGraph extends Component<GraphProps, {}> {
         verticalLabels: [],
         circles: [],
         horizontalLabels: [],
+        path: [],
       };
     }
 
     const points = labels.map((val, idx) => {
-      const cx = headerSize + (idx * canvasSize) / labels.length;
-      const cy =
-        headerSize +
-        canvasSize -
-        (values[idx] * canvasSize) / maxValue;
+      const cx = leftPadding + (idx * canvasWidth) / labels.length;
+      const cy = bottomPadding + canvasHeight -
+        (values[idx] * canvasHeight) / maxValue;
       return {
         x: cx,
         y: cy,
@@ -87,12 +105,12 @@ export default class SVGGraph extends Component<GraphProps, {}> {
 
     const dt = maxValue / 5;
     for (let i = 0; i <= maxValue + dt; i += dt) {
-      const y = headerSize + canvasSize - (i * canvasSize) / maxValue + 2;
+      const y = bottomPadding + canvasHeight - (i * canvasHeight) / maxValue + 2;
       lines.push(
-        <Line stroke="black" x1="0" x2="100%" y1={`${y}%`} y2={`${y}%`} />,
+        <Line stroke="black" x1={leftPadding} x2="100%" y1={`${y-5}%`} y2={`${y-5}%`} />,
       );
       lineLabels.push(
-        <Text stroke="black" x="0" y={`${y - 2}%`}>
+        <Text stroke="black" x="1" y={`${y - 2}%`}>
           {Math.round((i + Number.EPSILON) * 100) / 100}
         </Text>,
       );
@@ -104,6 +122,7 @@ export default class SVGGraph extends Component<GraphProps, {}> {
         verticalLabels: lineLabels,
         circles: [],
         horizontalLabels: [],
+        path: [],
       };
     }
 
@@ -111,35 +130,46 @@ export default class SVGGraph extends Component<GraphProps, {}> {
 
     const pathData = this.calculatePath(points);
 
+    //console.log(pathData);
+
     return {
       circles: points.map((val, idx) => <Circle cx={`${val.x}%`} cy={`${val.y}%`} r="2" fill="red" />),
-      //path: <Path d="M 10 10 L 55 10 z" fill="none" stroke="red" vector-effect="non-scaling-stroke"/>,
-      horizontalLabels: points.map((val, idx) => <Text stroke="black" x={`${val.x}%`} y="100%">{val.hLabel}</Text>),
+      horizontalLabels: points.map((val, idx) => <Text textAnchor="middle" stroke="black" x={`${val.x}%`} y="92%">{val.hLabel}</Text>),
       lines: lines,
       verticalLabels: lineLabels,
+      path: [<Path d={pathData} fill="none" stroke="red" vector-effect="non-scaling-stroke"/>],
     };
   }
 
   render() {
-    const { lines, verticalLabels, circles, horizontalLabels } = this.updateGraph();
-    return (
-      // <View width='100%' height="30%">
-      // <Svg width='100%' height="100%" viewBox="0 0 100 100" preserveAspectRatio="none">
-      //     {this.state.graph.lines}
-      //     {this.state.graph.circles}
-      //     {this.state.graph.path}
-      //     {this.state.graph.horizontalLabels}
-      //     {this.state.graph.verticalLabels}
-      // </Svg>
-      // </View>
+    const { lines, verticalLabels, circles, horizontalLabels, path } = this.updateGraph();
 
-      <Svg width="100%" height="30%">
-        {lines}
-        {circles}
-        {/* {path} */}
-        {horizontalLabels}
-        {verticalLabels}
+    const viewWidth = 100;
+    const viewHeight = 30;
+
+    const width = viewWidth * 4.5;
+    const height = width * (viewHeight / viewWidth);
+
+    const viewBoxData = `0 0 ${width} ${height}`;
+
+    return (
+      <View width='100%' height='30%'>
+      <Svg width='100%' height="100%" viewBox={viewBoxData} preserveAspectRatio="none">
+          {lines}
+          {circles}
+          {horizontalLabels}
+          {verticalLabels}
+          {path}
       </Svg>
+      </View>
+
+      // <Svg width="100%" height="30%">
+      //   {lines}
+      //   {circles}
+      //   {/* {path} */}
+      //   {horizontalLabels}
+      //   {verticalLabels}
+      // </Svg>
     );
   }
 }
