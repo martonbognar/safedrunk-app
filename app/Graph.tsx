@@ -63,7 +63,6 @@ export default class SVGGraph extends Component<GraphProps, {}> {
         `L ${X} ${Y} `,
       );
     }
-    pathData = pathData.concat('z');
     return pathData;
   }
 
@@ -130,7 +129,7 @@ export default class SVGGraph extends Component<GraphProps, {}> {
 
     const pathData = this.calculatePath(points);
 
-    //console.log(pathData);
+    console.log(pathData);
 
     return {
       circles: points.map((val, idx) => <Circle cx={`${val.x}%`} cy={`${val.y}%`} r="2" fill="red" />),
@@ -153,23 +152,13 @@ export default class SVGGraph extends Component<GraphProps, {}> {
     const viewBoxData = `0 0 ${width} ${height}`;
 
     return (
-      <View width='100%' height='30%'>
-      <Svg width='100%' height="100%" viewBox={viewBoxData} preserveAspectRatio="none">
+      <Svg width='100%' height="30%" viewBox={viewBoxData} preserveAspectRatio="none">
           {lines}
           {circles}
           {horizontalLabels}
           {verticalLabels}
           {path}
       </Svg>
-      </View>
-
-      // <Svg width="100%" height="30%">
-      //   {lines}
-      //   {circles}
-      //   {/* {path} */}
-      //   {horizontalLabels}
-      //   {verticalLabels}
-      // </Svg>
     );
   }
 }
