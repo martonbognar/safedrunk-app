@@ -33,12 +33,14 @@ export default class Drink extends Component<DrinkProps, DrinkState> {
   render() {
     const timeText = intervalToText(this.props.startTime);
     return (
-      <View>
+      <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 2, paddingBottom: 2}}>
         <Text>
           {this.props.volume} {volumeUnitToString(this.props.unit)} of {this.props.name} ({this.props.percentage}%) · {timeText}
         </Text>
-        <Button title="+" onPress={this.duplicate} />
-        <Button title="-" onPress={this.remove} />
+        <View style={{flexDirection: 'row'}}>
+          <Button title="+" onPress={this.duplicate} />
+          <Button title="-" onPress={this.remove} />
+        </View>
       </View>
     );
   }

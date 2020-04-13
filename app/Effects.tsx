@@ -21,20 +21,25 @@ export default class Effects extends Component<EffectsProps, {}> {
     const impairmentList = getImpairmentForIntoxication(intoxicationLevel);
 
     return (
-      <View>
+      <View style={{flexDirection: 'row'}}>
         {/* <ProgressBar percentage={this.props.percentage} /> */}
-        <Text>Effects</Text>
-        <FlatList
-          data={behaviorList}
-          renderItem={({item}) => <Text>{item}</Text>}
-          keyExtractor={(item, index) => index.toString()}
-        />
-        <Text>Impairment</Text>
-        <FlatList
-          data={impairmentList}
-          renderItem={({item}) => <Text>{item}</Text>}
-          keyExtractor={(item, index) => index.toString()}
-        />
+        <View style={{flex: 0.5, alignItems: 'center', borderColor: 'red', borderWidth: 1}}>
+          <Text>Effects</Text>
+          <FlatList
+            data={behaviorList}
+            renderItem={({item}) => <Text>{item}</Text>}
+            keyExtractor={(item, index) => index.toString()}
+          />
+        </View>
+
+        <View style={{flex: 0.5, alignItems: 'center', borderColor: 'red', borderWidth: 1}}>
+          <Text>Impairment</Text>
+          <FlatList
+            data={impairmentList}
+            renderItem={({item}) => <Text>{item}</Text>}
+            keyExtractor={(item, index) => index.toString()}
+          />
+        </View>
       </View>
     );
   }

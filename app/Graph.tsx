@@ -1,15 +1,22 @@
 import Svg, { Line, Circle, Path, Text } from 'react-native-svg';
 import React, { Component } from 'react';
-import { View } from 'react-native';
 import { ebacSteps } from './utils/BloodAlcohol';
 
 import { IBasicData } from './data/BasicData';
 import { IDrink } from './data/Drink';
+import { View } from 'react-native';
 
 interface GraphProps {
   basicData: IBasicData;
   drinks: IDrink[];
   currentTime: Date;
+}
+
+interface MyDimensions {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
 }
 
 interface IPoint {
@@ -19,9 +26,26 @@ interface IPoint {
   vLabel: number;
 }
 
-export default class SVGGraph extends Component<GraphProps, {}> {
+interface GraphData {
+  lines: Element[]; verticalLabels: Element[]; circles: Element[]; horizontalLabels: Element[]; path: Element[]
+}
+
+interface MyState {
+  dimensions: MyDimensions
+  graphData: GraphData
+}
+
+export default class SVGGraph extends Component<GraphProps, MyState> {
   constructor(props: Readonly<GraphProps>) {
     super(props);
+
+    var graphData : GraphData = {} as any;
+
+    this.state = {
+      graphData: {
+        lines: [], verticalLabels: [], circles: [], horizontalLabels: [], path: []
+      }
+    };
 
     this.updateGraph = this.updateGraph.bind(this);
     this.getData = this.getData.bind(this);
@@ -66,15 +90,18 @@ export default class SVGGraph extends Component<GraphProps, {}> {
     return pathData;
   }
 
-  updateGraph(): { lines: Element[]; verticalLabels: Element[]; circles: Element[]; horizontalLabels: Element[], path: Element[] } {
+  updateGraph(): GraphData {
+    console.log ('dimshere: ');
+    console.log (JSON.stringify (this.state.dimensions));
+
     const { values, labels } = this.getData();
 
     const maxValue = Math.max(...values);
 
-    const leftPadding = 30;
+    const leftPadding   = 30;
     const bottomPadding = 10;
 
-    const canvasWidth = 100 - leftPadding;
+    const canvasWidth  = 100 - leftPadding;
     const canvasHeight = 100 - bottomPadding;
 
     if (labels.length == 0) {
@@ -89,8 +116,7 @@ export default class SVGGraph extends Component<GraphProps, {}> {
 
     const points = labels.map((val, idx) => {
       const cx = leftPadding + (idx * canvasWidth) / labels.length;
-      const cy = bottomPadding + canvasHeight -
-        (values[idx] * canvasHeight) / maxValue;
+      const cy = bottomPadding + canvasHeight - (values[idx] * canvasHeight) / maxValue;
       return {
         x: cx,
         y: cy,
@@ -129,7 +155,7 @@ export default class SVGGraph extends Component<GraphProps, {}> {
 
     const pathData = this.calculatePath(points);
 
-    console.log(pathData);
+    //console.log(pathData);
 
     return {
       circles: points.map((val, idx) => <Circle cx={`${val.x}%`} cy={`${val.y}%`} r="2" fill="red" />),
@@ -141,24 +167,40 @@ export default class SVGGraph extends Component<GraphProps, {}> {
   }
 
   render() {
-    const { lines, verticalLabels, circles, horizontalLabels, path } = this.updateGraph();
+    //const { lines, verticalLabels, circles, horizontalLabels, path } = this.updateGraph();
 
-    const viewWidth = 100;
-    const viewHeight = 30;
+    // const viewWidth = 100;
+    // const viewHeight = 30;
 
-    const width = viewWidth * 4.5;
-    const height = width * (viewHeight / viewWidth);
+    // const width = viewWidth * 4.5;
+    // const height = width * (viewHeight / viewWidth);
 
-    const viewBoxData = `0 0 ${width} ${height}`;
+    // const viewBoxData = `0 0 ${width} ${height}`;
+
+    // console.log ('wfdafs');
+    // console.log (JSON.stringify (this.props.myDimensions));
+
+
+    //var dims : MyDimensions = {} as any;
+    //var graphData : GraphData = {} as any;
 
     return (
-      <Svg width='100%' height="30%" viewBox={viewBoxData} preserveAspectRatio="none">
-          {lines}
-          {circles}
-          {horizontalLabels}
-          {verticalLabels}
-          {path}
-      </Svg>
+      <View 
+      style={{borderColor: 'red', borderWidth: 1}} 
+      onLayout={(event) => {
+        var {x, y, width, height} = event.nativeEvent.layout;         
+        this.setState ({dimensions: { x: x, y: y, width: width, height: height}, graphData: this.updateGraph()});
+        }}>
+
+        <Svg width='100%' height="100%">
+            {this.state.graphData.lines}
+            {this.state.graphData.circles}
+            {this.state.graphData.horizontalLabels}
+            {this.state.graphData.verticalLabels}
+            {this.state.graphData.path}
+        </Svg>
+
+      </View>
     );
   }
 }

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { calculateEbac } from './utils/BloodAlcohol';
 import Effects from './Effects';
 import Graph from './Graph';
-import { View, Text } from 'react-native';
+import { View, Text, Dimensions } from 'react-native';
 import { Sex, WeightUnit } from './data/Units';
 import { IDrink } from './data/Drink';
 
@@ -39,11 +39,16 @@ export default class Calculator extends Component<
       new Date(),
       this.props.basicData,
     );
+
     return (
-      <View>
-        <Text>Blood alcohol content: {ebac}%</Text>
-        <Effects percentage={ebac} />
-        <Graph drinks={this.props.drinks} basicData={this.props.basicData} currentTime={this.props.currentTime} />
+      <View style={{ flex: 1, justifyContent: 'space-between'}}>
+        <View style={{ flex: 0.5}}>
+          <Text>Blood alcohol content: {ebac}%</Text>
+          <Effects percentage={ebac} />
+        </View>
+        <View style={{ flex: 0.5}}>
+          <Graph drinks={this.props.drinks} basicData={this.props.basicData} currentTime={this.props.currentTime} />
+        </View>
       </View>
     );
   }

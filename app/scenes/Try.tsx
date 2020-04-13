@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, FlatList, Button, Alert } from 'react-native';
+import { View, FlatList, Button, Alert, StyleSheet } from 'react-native';
 
 import DrinkComponent from '../Drink';
 import { IDrink, loadDrinksFromStore, deleteDrinkFromStore, saveDrinkToStore } from '../data/Drink';
@@ -111,29 +111,33 @@ export default class Try extends Component<LightProps, LightState> {
   render() {
     const self = this;
     return (
-      <View>
-        <Button
-          title="Settings"
-          onPress={() =>
-            this.props.navigation.navigate('Settings', {
-              onSave: self.loadBasicData,
-            })
-          }
-        />
+      <View style={styles.container}>
+        <View style={styles.header}>
+          <Button
+            title="Settings"
+            onPress={() =>
+              this.props.navigation.navigate('Settings', {
+                onSave: self.loadBasicData,
+              })
+            }
+          />
 
-        <Button
-          title="+ New drink"
-          onPress={() =>
-            this.props.navigation.navigate('DrinkAdd')
-          }
-        />
+          <Button
+            title="+ New drink"
+            onPress={() =>
+              this.props.navigation.navigate('DrinkAdd')
+            }
+          />
 
-        {/* <Button
-          title="Login"
-          onPress={() => this.props.navigation.navigate('Login')}
-        /> */}
+          {/* <Button
+            title="Login"
+            onPress={() => this.props.navigation.navigate('Login')}
+          /> */}
 
-        <View style={{ borderWidth: 0.5, borderColor: 'black', margin: 10 }} />
+          <View style={{ borderWidth: 0.5, borderColor: 'black', margin: 10 }} />
+        {/* </View>
+
+        <View style={styles.list}> */}
         <FlatList
           data={this.state.drinks}
           renderItem={({ item }) => (
@@ -151,12 +155,46 @@ export default class Try extends Component<LightProps, LightState> {
             />
           )}
         />
-        <Calculator
-          drinks={this.state.drinks}
-          basicData={this.state.basicData}
-          currentTime={this.state.currentTime}
-        />
+        <View style={{ borderWidth: 0.5, borderColor: 'black', margin: 10 }} />
+        </View>
+
+        <View style={styles.calculator}>
+          
+          <Calculator
+            drinks={this.state.drinks}
+            basicData={this.state.basicData}
+            currentTime={this.state.currentTime}
+          />
+        </View>
+
       </View>
     );
   }
 }
+
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'space-between'
+  },
+  header: {
+    flex: 0.5,
+    //justifyContent: 'flex-start'
+    borderColor: 'blue',
+    borderWidth: 1,
+  },
+  list: {
+    flex: 0.3,
+    // justifyContent: 'space-between',
+    borderColor: 'green',
+    borderWidth: 1,
+  },
+  calculator: {
+    flex: 0.5,
+    // justifyContent: 'flex-end',
+    // alignContent: 'flex-end',
+    borderColor: 'red',
+    borderWidth: 1,
+  }
+})
