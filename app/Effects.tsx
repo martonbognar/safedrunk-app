@@ -23,7 +23,13 @@ export default class Effects extends Component<EffectsProps, {}> {
     return (
       <View style={{flexDirection: 'row'}}>
         {/* <ProgressBar percentage={this.props.percentage} /> */}
-        <View style={{flex: 0.5, alignItems: 'center', borderColor: 'red', borderWidth: 1}}>
+        <View
+          style={{
+            flex: 0.5,
+            alignItems: 'center',
+            borderColor: 'red',
+            borderWidth: 1,
+          }}>
           <Text>Effects</Text>
           <FlatList
             data={behaviorList}
@@ -32,7 +38,13 @@ export default class Effects extends Component<EffectsProps, {}> {
           />
         </View>
 
-        <View style={{flex: 0.5, alignItems: 'center', borderColor: 'red', borderWidth: 1}}>
+        <View
+          style={{
+            flex: 0.5,
+            alignItems: 'center',
+            borderColor: 'red',
+            borderWidth: 1,
+          }}>
           <Text>Impairment</Text>
           <FlatList
             data={impairmentList}

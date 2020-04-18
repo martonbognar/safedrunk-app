@@ -1,13 +1,10 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
+import {Text, View, TextInput, Alert, Button, Picker} from 'react-native';
 import {
-  Text,
-  View,
-  TextInput,
-  Alert,
-  Button,
-  Picker,
-} from 'react-native';
-import { VolumeUnit, listOfVolumeUnitValues, volumeUnitToString } from '../data/Units';
+  VolumeUnit,
+  listOfVolumeUnitValues,
+  volumeUnitToString,
+} from '../data/Units';
 import DateTimePicker from '@react-native-community/datetimepicker';
 
 interface Beverage {
@@ -40,8 +37,8 @@ interface DrinkAddProps {
   route: {
     params: {
       onSubmit: Function;
-    }
-  }
+    };
+  };
 }
 
 enum Selection {
@@ -56,7 +53,10 @@ enum DateTimeChange {
   Time,
 }
 
-export default class DefaultNewDrink extends Component<DrinkAddProps, DrinkAddState> {
+export default class DefaultNewDrink extends Component<
+  DrinkAddProps,
+  DrinkAddState
+> {
   constructor(props: Readonly<DrinkAddProps>) {
     super(props);
 
@@ -92,14 +92,14 @@ export default class DefaultNewDrink extends Component<DrinkAddProps, DrinkAddSt
     value = value.replace(',', '.');
     const numeric = parseFloat(value);
     if (isNaN(numeric)) {
-      this.setState({ manualPercentage: null });
+      this.setState({manualPercentage: null});
     } else {
-      this.setState({ manualPercentage: numeric });
+      this.setState({manualPercentage: numeric});
     }
   }
 
   handleBeverageChange(value: number): void {
-    this.state.beverageList.forEach(function (beverage) {
+    this.state.beverageList.forEach(function(beverage) {
       if (beverage.id === value) {
         this.setState({
           name: beverage.name,
@@ -112,7 +112,7 @@ export default class DefaultNewDrink extends Component<DrinkAddProps, DrinkAddSt
 
   handleKeywordChange(input: string): void {
     const keyword = input.trim();
-    this.setState({ keyword: keyword, loading: true });
+    this.setState({keyword: keyword, loading: true});
 
     if (keyword !== '') {
       const self = this;
@@ -120,9 +120,9 @@ export default class DefaultNewDrink extends Component<DrinkAddProps, DrinkAddSt
       fetch(`https://safedrunk.com/api/public/beverages/filter/${keyword}`)
         .then(response => response.json())
         .then(response => {
-          self.setState({ beverageList: response });
+          self.setState({beverageList: response});
           if (response.length === 0) {
-            self.setState({ beverageId: null, loading: false });
+            self.setState({beverageId: null, loading: false});
           } else {
             const beverage = response[0];
             self.setState({
@@ -133,11 +133,13 @@ export default class DefaultNewDrink extends Component<DrinkAddProps, DrinkAddSt
             });
           }
         })
-        .catch(function () {
-          Alert.alert('There was a connection error. Please try reloading the page.');
+        .catch(function() {
+          Alert.alert(
+            'There was a connection error. Please try reloading the page.',
+          );
         });
     } else {
-      this.setState({ beverageList: [] });
+      this.setState({beverageList: []});
     }
   }
 
@@ -145,14 +147,14 @@ export default class DefaultNewDrink extends Component<DrinkAddProps, DrinkAddSt
     value = value.replace(',', '.');
     const numeric = parseFloat(value);
     if (isNaN(numeric)) {
-      this.setState({ volume: null });
+      this.setState({volume: null});
     } else {
-      this.setState({ volume: numeric });
+      this.setState({volume: numeric});
     }
   }
 
   handleUnitChange(value: VolumeUnit): void {
-    this.setState({ unit: value });
+    this.setState({unit: value});
   }
 
   submit(): void {
@@ -169,34 +171,34 @@ export default class DefaultNewDrink extends Component<DrinkAddProps, DrinkAddSt
     } else {
       drinkData.percentage = this.state.manualPercentage;
     }
-    this.props.navigation.navigate('Try', { drink: drinkData });
+    this.props.navigation.navigate('Try', {drink: drinkData});
   }
 
   percentageScreen(): Element {
-    const drinks = this.state.beverageList.map(drink =>
+    const drinks = this.state.beverageList.map(drink => (
       <Picker.Item
         value={drink.id}
         key={drink.id}
         label={`${drink.name} (${drink.percentage}%)`}
-      />,
-    );
+      />
+    ));
 
-    let picker = this.state.loading ?
+    let picker = this.state.loading ? (
       <Text>Loading...</Text>
-      :
-      this.state.beverageList.length == 0 ?
-        <Text>No results.</Text>
-        :
-        <Picker
-          selectedValue={this.state.beverageId}
-          onValueChange={this.handleBeverageChange}>
-          {drinks}
-        </Picker>;
+    ) : this.state.beverageList.length == 0 ? (
+      <Text>No results.</Text>
+    ) : (
+      <Picker
+        selectedValue={this.state.beverageId}
+        onValueChange={this.handleBeverageChange}>
+        {drinks}
+      </Picker>
+    );
 
     const hairline = {
       backgroundColor: '#A2A2A2',
       height: 2,
-      width: "100%",
+      width: '100%',
       marginVertical: 10,
     };
 
@@ -207,14 +209,21 @@ export default class DefaultNewDrink extends Component<DrinkAddProps, DrinkAddSt
         <TextInput
           placeholder="Percentage"
           keyboardType="numeric"
-          value={this.state.manualPercentage === null ? '' : this.state.manualPercentage.toString()}
+          value={
+            this.state.manualPercentage === null
+              ? ''
+              : this.state.manualPercentage.toString()
+          }
           onChangeText={this.handlePercentageChange}
         />
 
-        <Button title="Continue" onPress={() => this.setState({ stage: Selection.Quick })} />
+        <Button
+          title="Continue"
+          onPress={() => this.setState({stage: Selection.Quick})}
+        />
 
         <View style={hairline} />
-        <Text style={{ alignSelf: 'center' }}>OR</Text>
+        <Text style={{alignSelf: 'center'}}>OR</Text>
         <View style={hairline} />
 
         <Text>Or select it from our database:</Text>
@@ -227,7 +236,10 @@ export default class DefaultNewDrink extends Component<DrinkAddProps, DrinkAddSt
 
         {picker}
 
-        <Button title="Continue" onPress={() => this.setState({ stage: Selection.Beverage })} />
+        <Button
+          title="Continue"
+          onPress={() => this.setState({stage: Selection.Beverage})}
+        />
       </View>
     );
   }
@@ -235,25 +247,36 @@ export default class DefaultNewDrink extends Component<DrinkAddProps, DrinkAddSt
   onTimeChanged(_: any, selectedDate: Date | undefined) {
     let selected = selectedDate || new Date();
     // Alert.alert(selected.toISOString());
-    this.setState({ startTime: selected, dateTimeChange: DateTimeChange.None });
-  };
+    this.setState({startTime: selected, dateTimeChange: DateTimeChange.None});
+  }
 
   timeSelector(): Element {
     if (this.state.dateTimeChange === DateTimeChange.None) {
       const self = this;
-      return <View>
-        <Button title="Change start date" onPress={_ => self.setState({ dateTimeChange: DateTimeChange.Date })} />
-        <Button title="Change start time" onPress={_ => self.setState({ dateTimeChange: DateTimeChange.Time })} />
-      </View>
+      return (
+        <View>
+          <Button
+            title="Change start date"
+            onPress={_ => self.setState({dateTimeChange: DateTimeChange.Date})}
+          />
+          <Button
+            title="Change start time"
+            onPress={_ => self.setState({dateTimeChange: DateTimeChange.Time})}
+          />
+        </View>;
+      );
     } else {
-      const mode = this.state.dateTimeChange === DateTimeChange.Date ? 'date' : 'time';
-      return <DateTimePicker
-        value={this.state.startTime}
-        mode={mode}
-        is24Hour={true}
-        display="default"
-        onChange={this.onTimeChanged}
-      />
+      const mode =
+        this.state.dateTimeChange === DateTimeChange.Date ? 'date' : 'time';
+      return (
+        <DateTimePicker
+          value={this.state.startTime}
+          mode={mode}
+          is24Hour={true}
+          display="default"
+          onChange={this.onTimeChanged}
+        />
+      );;
     }
   }
 
@@ -281,7 +304,7 @@ export default class DefaultNewDrink extends Component<DrinkAddProps, DrinkAddSt
 
         <Button title="Submit" onPress={this.submit} />
       </View>
-    )
+    );
   }
 
   render() {

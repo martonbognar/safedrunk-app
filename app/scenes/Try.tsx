@@ -159,7 +159,7 @@ export default class Try extends Component<LightProps, LightState> {
         </View>
 
         <View style={styles.calculator}>
-          
+
           <Calculator
             drinks={this.state.drinks}
             basicData={this.state.basicData}

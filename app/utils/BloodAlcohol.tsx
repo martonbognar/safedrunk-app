@@ -108,7 +108,6 @@ function ebac(
   periodHours: number,
   userData: IBasicData,
 ): number {
-  console.log(userData);
   if (periodHours < 0) {
     return 0;
   }

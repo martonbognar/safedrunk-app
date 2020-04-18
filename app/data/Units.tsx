@@ -1,6 +1,9 @@
 /********************           Utility functions          ********************/
 
-function enumValueToString<T>(enumStringPairs: [T, string][], value: T): string {
+function enumValueToString<T>(
+  enumStringPairs: [T, string][],
+  value: T,
+): string {
   let result = null;
   enumStringPairs.forEach(tuple => {
     if (tuple[0] === value) {
@@ -10,10 +13,13 @@ function enumValueToString<T>(enumStringPairs: [T, string][], value: T): string 
   if (result !== null) {
     return result;
   }
-  throw "Incorrect enum value: " + value + enumStringPairs;
+  throw 'Incorrect enum value: ' + value + enumStringPairs;
 }
 
-function stringToEnumValue<T>(enumStringPairs: [T, string][], value: string): T {
+function stringToEnumValue<T>(
+  enumStringPairs: [T, string][],
+  value: string,
+): T {
   let result = null;
   enumStringPairs.forEach(tuple => {
     if (tuple[1] === value) {
@@ -23,13 +29,12 @@ function stringToEnumValue<T>(enumStringPairs: [T, string][], value: string): T 
   if (result !== null) {
     return result;
   }
-  throw "Incorrect string value!";
+  throw 'Incorrect string value!';
 }
 
 function listOfEnumValues<T>(enumStringPairs: [T, string][]): T[] {
   return enumStringPairs.map(tuple => tuple[0]);
 }
-
 
 /********************               Sex type               ********************/
 
@@ -39,11 +44,11 @@ enum Sex {
 }
 
 const sexStringPairs: [Sex, string][] = [
-  [Sex.Female, "Female"],
-  [Sex.Male, "Male"],
+  [Sex.Female, 'Female'],
+  [Sex.Male, 'Male'],
 ];
 
-const listOfSexValues =listOfEnumValues(sexStringPairs);
+const listOfSexValues = listOfEnumValues(sexStringPairs);
 
 function sexToString(sex: Sex): string {
   return enumValueToString(sexStringPairs, sex);
@@ -52,7 +57,6 @@ function sexToString(sex: Sex): string {
 function stringToSex(sex: string): Sex {
   return stringToEnumValue(sexStringPairs, sex);
 }
-
 
 /********************            WeightUnit type           ********************/
 
@@ -63,9 +67,9 @@ enum WeightUnit {
 }
 
 const weightUnitStringPairs: [WeightUnit, string][] = [
-  [WeightUnit.Kg, "kg"],
-  [WeightUnit.Lbs, "lbs"],
-  [WeightUnit.Stone, "stone"],
+  [WeightUnit.Kg, 'kg'],
+  [WeightUnit.Lbs, 'lbs'],
+  [WeightUnit.Stone, 'stone'],
 ];
 
 const listOfWeightUnitValues = listOfEnumValues(weightUnitStringPairs);
@@ -89,7 +93,6 @@ function weightToKg(amount: number, unit: WeightUnit): number {
   }
 }
 
-
 /********************            VolumeUnit type           ********************/
 
 enum VolumeUnit {
@@ -101,12 +104,12 @@ enum VolumeUnit {
 }
 
 const volumeUnitStringPairs: [VolumeUnit, string][] = [
-  [VolumeUnit.Cl, "cl"],
-  [VolumeUnit.Dl, "dl"],
-  [VolumeUnit.FlOz, "fl oz"],
-  [VolumeUnit.UkPint, "pink (UK)"],
-  [VolumeUnit.UsPint, "pint (US)"],
-]
+  [VolumeUnit.Cl, 'cl'],
+  [VolumeUnit.Dl, 'dl'],
+  [VolumeUnit.FlOz, 'fl oz'],
+  [VolumeUnit.UkPint, 'pink (UK)'],
+  [VolumeUnit.UsPint, 'pint (US)'],
+];
 
 const listOfVolumeUnitValues = listOfEnumValues(volumeUnitStringPairs);
 
