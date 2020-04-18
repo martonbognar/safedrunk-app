@@ -95,8 +95,8 @@ export default class SVGGraph extends Component<GraphProps, MyState> {
   }
 
   updateGraph(): GraphData {
-    console.log('dimshere: ');
-    console.log(JSON.stringify(this.state.dimensions));
+    // console.log('dimshere: ');
+    // console.log(JSON.stringify(this.state.dimensions));
 
     const {values, labels} = this.getData();
 

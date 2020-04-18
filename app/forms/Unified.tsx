@@ -1,10 +1,11 @@
 import React, {Component} from 'react';
-import {Text, View, TextInput, Alert, Button, Picker} from 'react-native';
+import {Text, View, TextInput, Alert, Button} from 'react-native';
 import {
   VolumeUnit,
   listOfVolumeUnitValues,
   volumeUnitToString,
 } from '../data/Units';
+import {Picker} from '@react-native-community/picker';
 import DateTimePicker from '@react-native-community/datetimepicker';
 
 interface Beverage {
@@ -22,7 +23,7 @@ interface DrinkAddState {
   volume: null | number;
   modifyStart: boolean;
   beverageList: Beverage[];
-  beverageId: null | number;
+  beverageId: undefined | number;
   keyword: string;
   stage: Selection;
   loading: boolean;
@@ -67,7 +68,7 @@ export default class DefaultNewDrink extends Component<
       beveragePercentage: null,
       manualPercentage: null,
       startTime: new Date(),
-      beverageId: null,
+      beverageId: undefined,
       beverageList: [],
       keyword: '',
       modifyStart: false,
@@ -98,16 +99,17 @@ export default class DefaultNewDrink extends Component<
     }
   }
 
-  handleBeverageChange(value: number): void {
+  handleBeverageChange(value: number, _: number): void {
+    let self = this;
     this.state.beverageList.forEach(function(beverage) {
       if (beverage.id === value) {
-        this.setState({
+        self.setState({
           name: beverage.name,
-          percentage: beverage.percentage,
+          beveragePercentage: beverage.percentage,
           beverageId: beverage.id,
         });
       }
-    }, this);
+    });
   }
 
   handleKeywordChange(input: string): void {
@@ -122,7 +124,7 @@ export default class DefaultNewDrink extends Component<
         .then(response => {
           self.setState({beverageList: response});
           if (response.length === 0) {
-            self.setState({beverageId: null, loading: false});
+            self.setState({beverageId: undefined, loading: false});
           } else {
             const beverage = response[0];
             self.setState({
@@ -161,9 +163,10 @@ export default class DefaultNewDrink extends Component<
     const drinkData = {
       name: this.state.name,
       volume: this.state.volume,
-      unit: this.state.unit,
+      unit: volumeUnitToString(this.state.unit),
       startTime: this.state.startTime,
       beverageId: null,
+      percentage: 0,
     };
     if (this.state.stage === Selection.Beverage) {
       drinkData.beverageId = this.state.beverageId;
@@ -185,7 +188,7 @@ export default class DefaultNewDrink extends Component<
 
     let picker = this.state.loading ? (
       <Text>Loading...</Text>
-    ) : this.state.beverageList.length == 0 ? (
+    ) : this.state.beverageList.length === 0 ? (
       <Text>No results.</Text>
     ) : (
       <Picker
@@ -263,7 +266,7 @@ export default class DefaultNewDrink extends Component<
             title="Change start time"
             onPress={_ => self.setState({dateTimeChange: DateTimeChange.Time})}
           />
-        </View>;
+        </View>
       );
     } else {
       const mode =
@@ -276,7 +279,7 @@ export default class DefaultNewDrink extends Component<
           display="default"
           onChange={this.onTimeChanged}
         />
-      );;
+      );
     }
   }
 

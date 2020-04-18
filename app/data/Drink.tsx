@@ -24,17 +24,17 @@ async function saveDrinksToStore(drinks: IDrink[]) {
 }
 
 async function saveDrinkToStore(drink: IDrink) {
-  const drinks = await loadDrinksFromStore();
+  const [drinks, _] = await loadDrinksFromStore();
   drinks.push(drink);
   return saveDrinksToStore(drinks);
 }
 
 async function deleteDrinkFromStore(drink: IDrink) {
-  const drinks = await loadDrinksFromStore();
+  const [drinks, _] = await loadDrinksFromStore();
 
   let index = -1;
   drinks.forEach(function (d, i) {
-    if (d.key === drink.key) {
+    if (d.id === drink.id) {
       index = i;
     }
   });
@@ -43,13 +43,13 @@ async function deleteDrinkFromStore(drink: IDrink) {
   return saveDrinksToStore(drinks);
 }
 
-async function loadDrinksFromStore(): Promise<IDrink[]> {
+async function loadDrinksFromStore(): Promise<[IDrink[], number]> {
   const drinksString = await AsyncStorage.getItem('drinks');
   if (drinksString === null) {
-    return [];
+    return [[], 0];
   } else {
     const drinksRaw = JSON.parse(drinksString);
-    return drinksRaw.map(d => ({
+    const drinks: IDrink[] = drinksRaw.map(d => ({
       key: d.key,
       id: d.id,
       name: d.name,
@@ -58,6 +58,10 @@ async function loadDrinksFromStore(): Promise<IDrink[]> {
       unit: stringToVolumeUnit(d.unit),
       volume: d.volume,
     }));
+    if (drinks.length === 0) {
+      return [[], 0];
+    }
+    return [drinks, Math.max(...drinks.map(d => d.id))]
   }
 }
 

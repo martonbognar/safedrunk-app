@@ -4,7 +4,7 @@ import { View, FlatList, Button, Alert, StyleSheet } from 'react-native';
 import DrinkComponent from '../Drink';
 import { IDrink, loadDrinksFromStore, deleteDrinkFromStore, saveDrinkToStore } from '../data/Drink';
 import Calculator from '../Calculator';
-import { WeightUnit, Sex } from '../data/Units';
+import { WeightUnit, Sex, stringToVolumeUnit } from '../data/Units';
 import { IBasicData, getBasicDataFromStorage } from '../data/BasicData';
 
 interface LightState {
@@ -22,6 +22,7 @@ interface LightProps {
   route: {
     params: {
       drink: IDrink;
+      basicDataUpdate: boolean;
     }
   }
 }
@@ -64,8 +65,13 @@ export default class Try extends Component<LightProps, LightState> {
 
   componentDidUpdate() {
     if (this.props.route.params?.drink !== undefined) {
-      this.submitDrink(this.props.route.params.drink);
+      let drink = this.props.route.params.drink;
+      drink.unit = stringToVolumeUnit(drink.unit);
+      this.submitDrink(drink);
       this.props.navigation.setParams({ drink: undefined });
+    }
+    if (this.props.route.params?.basicDataUpdate === true) {
+      this.loadBasicData();
     }
   }
 
@@ -78,13 +84,13 @@ export default class Try extends Component<LightProps, LightState> {
   }
 
   loadDrinks() {
-    loadDrinksFromStore().then(drinks => this.setState({ drinks: drinks }));
+    loadDrinksFromStore().then(tuple => this.setState({ drinks: tuple[0], keygen: tuple[1] + 1 }));
   }
 
   removeDrink(drink: IDrink) {
     let index = -1;
     this.state.drinks.forEach(function (d, i) {
-      if (d.key === drink.key) {
+      if (d.id === drink.id) {
         index = i;
       }
     });
@@ -102,6 +108,7 @@ export default class Try extends Component<LightProps, LightState> {
   submitDrink(drink: IDrink) {
     drink.key = this.state.keygen.toString();
     drink.id = this.state.keygen;
+    console.log('key: ', this.state.keygen);
     saveDrinkToStore(drink).then(_ => this.setState({
       drinks: this.state.drinks.concat([drink]),
       keygen: this.state.keygen + 1,
@@ -116,9 +123,7 @@ export default class Try extends Component<LightProps, LightState> {
           <Button
             title="Settings"
             onPress={() =>
-              this.props.navigation.navigate('Settings', {
-                onSave: self.loadBasicData,
-              })
+              this.props.navigation.navigate('Settings')
             }
           />
 

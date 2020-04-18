@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
-import {Text, View, Button, TextInput, Picker, Alert} from 'react-native';
+import {Text, View, Button, TextInput, Alert} from 'react-native';
+import {Picker} from '@react-native-community/picker';
 import {
   IBasicData,
   getBasicDataFromStorage,
@@ -17,12 +18,6 @@ import {
 interface SettingsProps {
   navigation: {
     navigate: Function;
-    goBack: Function;
-  };
-  route: {
-    params: {
-      onSave: Function;
-    };
   };
 }
 
@@ -53,8 +48,7 @@ export default class Settings extends Component<SettingsProps, SettingsState> {
   saveData() {
     saveBasicDataToStorage(this.state)
       .then(_ => {
-        this.props.route.params.onSave();
-        this.props.navigation.goBack();
+        this.props.navigation.navigate('Try', {basicDataUpdate: true});
       })
       .catch(e => Alert.alert('', e.toString()));
   }

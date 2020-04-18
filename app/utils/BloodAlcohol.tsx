@@ -1,4 +1,4 @@
-import {Sex, volumeToCl} from '../data/Units';
+import {Sex, volumeToCl, weightToKg} from '../data/Units';
 import {IDrink} from '../data/Drink';
 import {IBasicData} from '../data/BasicData';
 
@@ -112,9 +112,9 @@ function ebac(
     return 0;
   }
   let bw = userData.sex === Sex.Male ? 0.58 : 0.49;
+  const weight = weightToKg(userData.weight, userData.weightUnit);
   let result =
-    (0.806 * (alcoholGrams / 10) * 1.2) / (bw * userData.weight) -
-    0.017 * periodHours;
+    (0.806 * (alcoholGrams / 10) * 1.2) / (bw * weight) - 0.017 * periodHours;
   return result > 0 ? result : 0;
 }
 
