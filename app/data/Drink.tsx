@@ -1,5 +1,11 @@
-import { VolumeUnit, sexToString, weightUnitToString, volumeUnitToString, stringToVolumeUnit } from './Units';
+import { VolumeUnit, volumeUnitToString, stringToVolumeUnit } from './Units';
 import AsyncStorage from '@react-native-community/async-storage';
+
+/*
+ * TYPE
+ */
+
+// TODO: private stored type
 
 interface IDrink {
   key: string;
@@ -10,6 +16,11 @@ interface IDrink {
   unit: VolumeUnit;
   volume: number;
 }
+
+
+/*
+ * FUNCTIONS
+ */
 
 async function saveDrinksToStore(drinks: IDrink[]) {
   return AsyncStorage.setItem('drinks', JSON.stringify(drinks.map(d => ({
@@ -24,13 +35,13 @@ async function saveDrinksToStore(drinks: IDrink[]) {
 }
 
 async function saveDrinkToStore(drink: IDrink) {
-  const [drinks, _] = await loadDrinksFromStore();
+  const [drinks] = await loadDrinksFromStore();
   drinks.push(drink);
   return saveDrinksToStore(drinks);
 }
 
 async function deleteDrinkFromStore(drink: IDrink) {
-  const [drinks, _] = await loadDrinksFromStore();
+  const [drinks] = await loadDrinksFromStore();
 
   let index = -1;
   drinks.forEach(function (d, i) {
@@ -64,6 +75,10 @@ async function loadDrinksFromStore(): Promise<[IDrink[], number]> {
     return [drinks, Math.max(...drinks.map(d => d.id))]
   }
 }
+
+/*
+ * EXPORT
+ */
 
 export type { IDrink };
 export { saveDrinkToStore, deleteDrinkFromStore, loadDrinksFromStore };

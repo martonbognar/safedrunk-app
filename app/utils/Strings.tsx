@@ -22,4 +22,16 @@ function intervalToText(date: Date): string {
   }
 }
 
-export {intervalToText};
+
+/**
+ * For a date object, returns the time component as hh:mm.
+ */
+function prettyPrintHoursMinutes(date: Date): string {
+  return (
+    ('0' + date.getHours()).slice(-2) +
+    ':' +
+    ('0' + date.getMinutes()).slice(-2)
+  );
+}
+
+export {intervalToText, prettyPrintHoursMinutes};

@@ -1,7 +1,13 @@
 import {Sex, volumeToCl, weightToKg} from '../data/Units';
 import {IDrink} from '../data/Drink';
 import {IBasicData} from '../data/BasicData';
+import { prettyPrintHoursMinutes } from './Strings';
 
+
+/**
+ * For a list of drinks, returns the Date of the first (oldest) and last
+ * (newest) drink's creation date.
+ */
 function firstAndLastTime(drinks: IDrink[]): [Date, Date] {
   let firstDot = new Date(drinks[0].startTime.getTime());
   let lastDot = new Date(drinks[drinks.length - 1].startTime.getTime());
@@ -19,14 +25,12 @@ function firstAndLastTime(drinks: IDrink[]): [Date, Date] {
   return [firstDot, lastDot];
 }
 
-function prettyPrintHoursMinutes(date: Date): string {
-  return (
-    ('0' + date.getHours()).slice(-2) +
-    ':' +
-    ('0' + date.getMinutes()).slice(-2)
-  );
-}
 
+/**
+ * No clue what this does.
+ * @param drinks - The list of drinks.
+ * @param userData - The user's basic data.
+ */
 function ebacSteps(
   drinks: IDrink[],
   userData: IBasicData,

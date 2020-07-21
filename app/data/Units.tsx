@@ -1,42 +1,8 @@
-/********************           Utility functions          ********************/
+import { listOfEnumValues, enumValueToString, stringToEnumValue } from "../utils/Enums";
 
-function enumValueToString<T>(
-  enumStringPairs: [T, string][],
-  value: T,
-): string {
-  let result = null;
-  enumStringPairs.forEach(tuple => {
-    if (tuple[0] === value) {
-      result = tuple[1];
-    }
-  });
-  if (result !== null) {
-    return result;
-  }
-  throw 'Incorrect enum value: ' + value + enumStringPairs;
-}
-
-function stringToEnumValue<T>(
-  enumStringPairs: [T, string][],
-  value: string,
-): T {
-  let result = null;
-  enumStringPairs.forEach(tuple => {
-    if (tuple[1] === value) {
-      result = tuple[0];
-    }
-  });
-  if (result !== null) {
-    return result;
-  }
-  throw 'Incorrect string value!';
-}
-
-function listOfEnumValues<T>(enumStringPairs: [T, string][]): T[] {
-  return enumStringPairs.map(tuple => tuple[0]);
-}
-
-/********************               Sex type               ********************/
+/*
+ * SEX TYPE
+ */
 
 enum Sex {
   Female,
@@ -58,7 +24,10 @@ function stringToSex(sex: string): Sex {
   return stringToEnumValue(sexStringPairs, sex);
 }
 
-/********************            WeightUnit type           ********************/
+
+/*
+ * WEIGHT UNIT TYPE
+ */
 
 enum WeightUnit {
   Kg,
@@ -93,7 +62,10 @@ function weightToKg(amount: number, unit: WeightUnit): number {
   }
 }
 
-/********************            VolumeUnit type           ********************/
+
+/*
+ * VOLUME UNIT TYPE
+ */
 
 enum VolumeUnit {
   Cl,
@@ -135,6 +107,10 @@ function volumeToCl(amount: number, unit: VolumeUnit): number {
       return amount * 47.2;
   }
 }
+
+/*
+ * EXPORT
+ */
 
 export {
   Sex,

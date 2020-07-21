@@ -1,11 +1,20 @@
 import { WeightUnit, Sex, sexToString, weightUnitToString, stringToSex, stringToWeightUnit } from './Units';
 import AsyncStorage from '@react-native-community/async-storage';
 
+/*
+ * TYPE
+ */
+
 interface IBasicData {
   sex: Sex;
   weight: number;
   weightUnit: WeightUnit;
 }
+
+
+/*
+ * FUNCTIONS
+ */
 
 async function saveBasicDataToStorage(basicData: IBasicData): Promise<void> {
   try {
@@ -34,6 +43,10 @@ async function getBasicDataFromStorage(): Promise<(IBasicData | null)> {
   }
 }
 
+
+/*
+ * EXPORT
+ */
 
 export type { IBasicData };
 export { saveBasicDataToStorage, getBasicDataFromStorage };

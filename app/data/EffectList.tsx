@@ -1,3 +1,7 @@
+/*
+ * TYPE
+ */
+
 enum IntoxicationLevel {
   Subtle,
   Joyousness,
@@ -7,6 +11,11 @@ enum IntoxicationLevel {
   Stupor,
   Coma,
 }
+
+
+/*
+ * FUNCTIONS
+ */
 
 function getIntoxicationLevel(ebac: number): IntoxicationLevel {
   if (ebac <= 0.03) {
@@ -114,6 +123,11 @@ function getImpairmentForIntoxication(level: IntoxicationLevel): string[] {
       return ['Breathing', 'Heart rate', 'Positional alcohol nystagmus'];
   }
 }
+
+
+/*
+ * EXPORT
+ */
 
 export {
   IntoxicationLevel,

@@ -64,6 +64,10 @@ export default class Try extends Component<LightProps, LightState> {
   }
 
   componentDidUpdate() {
+    if (this.props.route === undefined) {
+      return;
+    }
+
     if (this.props.route.params?.drink !== undefined) {
       let drink = this.props.route.params.drink;
       drink.unit = stringToVolumeUnit(drink.unit);
