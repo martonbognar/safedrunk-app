@@ -144,6 +144,7 @@ export default class SVGGraph extends Component<GraphProps, MyState> {
           x2="100%"
           y1={`${y - 5}%`}
           y2={`${y - 5}%`}
+          key={"line" + y}
         />,
       );
       lineLabels.push(
@@ -171,7 +172,7 @@ export default class SVGGraph extends Component<GraphProps, MyState> {
 
     return {
       circles: points.map((val, idx) => (
-        <Circle cx={`${val.x}%`} cy={`${val.y}%`} r="2" fill="red" />
+        <Circle cx={`${val.x}%`} cy={`${val.y}%`} r="2" fill="red" key={"circle" + val.x + val.y} />
       )),
       horizontalLabels: points.map((val, idx) => (
         <Text textAnchor="middle" stroke="black" x={`${val.x}%`} y="92%">

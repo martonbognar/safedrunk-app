@@ -1,12 +1,13 @@
 import React, { Component } from 'react';
 import { FlatList, Alert, StyleSheet } from 'react-native';
-import { Container, Header, View, Button, Icon, Fab, Text } from 'native-base';
+import { Container, Header, View, Button, Icon, Fab, Text, List, ListItem, Left, Body, Right } from 'native-base';
 
 import DrinkComponent from '../Drink';
 import { IDrink, loadDrinksFromStore, deleteDrinkFromStore, saveDrinkToStore } from '../data/Drink';
 import Calculator from '../Calculator';
 import { WeightUnit, Sex, stringToVolumeUnit } from '../data/Units';
 import { IBasicData, getBasicDataFromStorage } from '../data/BasicData';
+import { intervalToText } from '../utils/Strings';
 
 interface LightState {
   drinks: IDrink[];
@@ -135,21 +136,33 @@ export default class Try extends Component<LightProps, LightState> {
             {/* </View>
 
         <View style={styles.list}> */}
-            <FlatList
-              data={this.state.drinks}
+            <List
+              dataArray={this.state.drinks}
               renderItem={({ item }) => (
-                <DrinkComponent
-                  key={item.key}
-                  id={item.id}
-                  name={item.name}
-                  percentage={item.percentage}
-                  startTime={item.startTime}
-                  unit={item.unit}
-                  volume={item.volume}
-                  onRemove={this.removeDrink}
-                  onDuplicate={this.duplicateDrink}
-                  currentTime={this.state.currentTime}
-                />
+                <ListItem avatar>
+                  <Left>
+                    <Text>{item.percentage}%</Text>
+                  </Left>
+                  <Body>
+                    {/* <DrinkComponent
+                      key={item.key}
+                      id={item.id}
+                      name={item.name}
+                      percentage={item.percentage}
+                      startTime={item.startTime}
+                      unit={item.unit}
+                      volume={item.volume}
+                      onRemove={this.removeDrink}
+                      onDuplicate={this.duplicateDrink}
+                      currentTime={this.state.currentTime}
+                    /> */}
+                    <Text>{item.name}</Text>
+                    <Text note>{item.volume}</Text>
+                  </Body>
+                  <Right>
+                    <Text>{intervalToText(item.startTime)}</Text>
+                  </Right>
+                </ListItem>
               )}
             />
             <View style={{ borderWidth: 0.5, borderColor: 'black', margin: 10 }} />
