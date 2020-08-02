@@ -87,12 +87,12 @@ export default class Calculator extends Component<
     }
 
     return (
-      <View style={{flex: 1, justifyContent: 'space-between'}}>
-        <View style={{flex: 0.5}}>
+      <View>
+        <View>
           <Text>Blood alcohol content: {ebac}%</Text>
           {effects}
         </View>
-        <View style={{flex: 0.5}}>{graph}</View>
+        {/* <View>{graph}</View> */}
       </View>
     );
   }

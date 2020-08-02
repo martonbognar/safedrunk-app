@@ -60,7 +60,6 @@ export default class SVGGraph extends Component<GraphProps, MyState> {
   }
 
   getData(): {values: number[]; labels: string[]} {
-    // console.log(this.props.basicData);
     const data = ebacSteps(this.props.drinks, this.props.basicData);
 
     if (data.comeDown !== null) {
@@ -95,9 +94,6 @@ export default class SVGGraph extends Component<GraphProps, MyState> {
   }
 
   updateGraph(): GraphData {
-    // console.log('dimshere: ');
-    // console.log(JSON.stringify(this.state.dimensions));
-
     const {values, labels} = this.getData();
 
     const maxValue = Math.max(...values);
@@ -164,18 +160,14 @@ export default class SVGGraph extends Component<GraphProps, MyState> {
       };
     }
 
-    //console.log(JSON.stringify(dimensions));
-
     const pathData = this.calculatePath(points);
-
-    //console.log(pathData);
 
     return {
       circles: points.map((val, idx) => (
         <Circle cx={`${val.x}%`} cy={`${val.y}%`} r="2" fill="red" key={"circle" + val.x + val.y} />
       )),
       horizontalLabels: points.map((val, idx) => (
-        <Text textAnchor="middle" stroke="black" x={`${val.x}%`} y="92%">
+        <Text textAnchor="middle" stroke="black" x={`${val.x}%`} y="92%" key={"text" + val.x}>
           {val.hLabel}
         </Text>
       )),
@@ -202,9 +194,6 @@ export default class SVGGraph extends Component<GraphProps, MyState> {
     // const height = width * (viewHeight / viewWidth);
 
     // const viewBoxData = `0 0 ${width} ${height}`;
-
-    // console.log ('wfdafs');
-    // console.log (JSON.stringify (this.props.myDimensions));
 
     //var dims : MyDimensions = {} as any;
     //var graphData : GraphData = {} as any;

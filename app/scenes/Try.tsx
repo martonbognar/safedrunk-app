@@ -5,9 +5,10 @@ import { Container, Header, View, Button, Icon, Fab, Text, List, ListItem, Left,
 import DrinkComponent from '../Drink';
 import { IDrink, loadDrinksFromStore, deleteDrinkFromStore, saveDrinkToStore } from '../data/Drink';
 import Calculator from '../Calculator';
-import { WeightUnit, Sex, stringToVolumeUnit } from '../data/Units';
+import { WeightUnit, Sex, stringToVolumeUnit, volumeUnitToString } from '../data/Units';
 import { IBasicData, getBasicDataFromStorage } from '../data/BasicData';
 import { intervalToText } from '../utils/Strings';
+import { ScrollView } from 'react-native-gesture-handler';
 
 interface LightState {
   drinks: IDrink[];
@@ -124,71 +125,65 @@ export default class Try extends Component<LightProps, LightState> {
   render() {
     const self = this;
     return (
-      <Container>
-        <View style={styles.container}>
-          <View style={styles.header}>
-            <Button block light
-              onPress={() =>
-                this.props.navigation.navigate('Settings')
-              }><Text>Settings</Text></Button>
-
-            <View style={{ borderWidth: 0.5, borderColor: 'black', margin: 10 }} />
-            {/* </View>
-
-        <View style={styles.list}> */}
-            <List
-              dataArray={this.state.drinks}
-              renderItem={({ item }) => (
-                <ListItem avatar>
-                  <Left>
-                    <Text>{item.percentage}%</Text>
-                  </Left>
-                  <Body>
-                    {/* <DrinkComponent
-                      key={item.key}
-                      id={item.id}
-                      name={item.name}
-                      percentage={item.percentage}
-                      startTime={item.startTime}
-                      unit={item.unit}
-                      volume={item.volume}
-                      onRemove={this.removeDrink}
-                      onDuplicate={this.duplicateDrink}
-                      currentTime={this.state.currentTime}
-                    /> */}
-                    <Text>{item.name}</Text>
-                    <Text note>{item.volume}</Text>
-                  </Body>
-                  <Right>
-                    <Text>{intervalToText(item.startTime)}</Text>
-                  </Right>
-                </ListItem>
-              )}
-            />
-            <View style={{ borderWidth: 0.5, borderColor: 'black', margin: 10 }} />
-          </View>
-
-          <View style={styles.calculator}>
-
-            <Calculator
-              drinks={this.state.drinks}
-              basicData={this.state.basicData}
-              currentTime={this.state.currentTime}
-            />
-          </View>
-          <Fab
-            active={true}
-            direction="up"
-            containerStyle={{}}
-            style={{ backgroundColor: '#5067FF' }}
-            position="bottomRight"
+      <View style={styles.container}>
+        <View style={{ justifyContent: 'space-between', flexDirection: 'row', margin: 5, alignItems: 'center', borderBottomColor: 'black', borderBottomWidth: 2 }}>
+          <Text style={{fontSize: 25}}>BAC: 0.34%</Text>
+          <Button small warning rounded
             onPress={() =>
-              self.props.navigation.navigate('DrinkAdd')
-            }>
-            <Text>+</Text>
-          </Fab>
+              this.props.navigation.navigate('Settings')
+            }><Text>⚙️</Text></Button>
         </View>
-      </Container>
+        <View>
+          <List
+            dataArray={this.state.drinks}
+            renderItem={({ item }) => (
+              <ListItem avatar>
+                <Left>
+                  <Text>{item.percentage}%</Text>
+                </Left>
+                <Body>
+                  {/* <DrinkComponent
+                    key={item.key}
+                    id={item.id}
+                    name={item.name}
+                    percentage={item.percentage}
+                    startTime={item.startTime}
+                    unit={item.unit}
+                    volume={item.volume}
+                    onRemove={this.removeDrink}
+                    onDuplicate={this.duplicateDrink}
+                    currentTime={this.state.currentTime}
+                  /> */}
+                  <Text>{item.name}</Text>
+                <Text note>{item.volume} {volumeUnitToString(item.unit)}</Text>
+                </Body>
+                <Right>
+                  <Text>{intervalToText(item.startTime)}</Text>
+                </Right>
+              </ListItem>
+            )}
+          />
+        </View>
+        <View style={{ borderWidth: 0.5, borderColor: 'black', margin: 10 }} />
+
+        <View>
+          <Calculator
+            drinks={this.state.drinks}
+            basicData={this.state.basicData}
+            currentTime={this.state.currentTime}
+          />
+        </View>
+        <Fab
+          active={true}
+          direction="up"
+          style={{ backgroundColor: '#5067FF' }}
+          position="bottomRight"
+          onPress={() =>
+            self.props.navigation.navigate('DrinkAdd')
+          }>
+          <Text>+</Text>
+        </Fab>
+      </View>
     );
   }
 }
@@ -197,25 +192,6 @@ export default class Try extends Component<LightProps, LightState> {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'space-between'
-  },
-  header: {
-    flex: 0.5,
-    //justifyContent: 'flex-start'
-    borderColor: 'blue',
-    borderWidth: 1,
-  },
-  list: {
-    flex: 0.3,
-    // justifyContent: 'space-between',
-    borderColor: 'green',
-    borderWidth: 1,
-  },
-  calculator: {
-    flex: 0.5,
-    // justifyContent: 'flex-end',
-    // alignContent: 'flex-end',
-    borderColor: 'red',
-    borderWidth: 1,
+    // justifyContent: 'space-between'
   }
 })
