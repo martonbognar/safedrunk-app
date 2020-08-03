@@ -125,53 +125,6 @@ export default class Try extends Component<LightProps, LightState> {
 
   render() {
     const self = this;
-    const closeRow = (rowMap, rowKey) => {
-      if (rowMap[rowKey]) {
-        rowMap[rowKey].closeRow();
-      }
-    };
-
-    const deleteRow = (rowMap, rowKey) => {
-      closeRow(rowMap, rowKey);
-      const newData = [...listData];
-      const prevIndex = listData.findIndex(item => item.key === rowKey);
-      newData.splice(prevIndex, 1);
-      setListData(newData);
-    };
-
-    const onRowDidOpen = rowKey => {
-      console.log('This row opened', rowKey);
-    };
-
-    const renderItem = data => (
-      <TouchableHighlight
-        onPress={() => console.log('You touched me')}
-        style={styles.rowFront}
-        underlayColor={'#AAA'}
-      >
-        <View>
-          <Text>I am {data.item.text} in a SwipeListView</Text>
-        </View>
-      </TouchableHighlight>
-    );
-
-    const renderHiddenItem = (data, rowMap) => (
-      <View style={styles.rowBack}>
-        <Text>Left</Text>
-        <TouchableOpacity
-          style={[styles.backRightBtn, styles.backRightBtnLeft]}
-          onPress={() => closeRow(rowMap, data.item.key)}
-        >
-          <Text style={styles.backTextWhite}>Close</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.backRightBtn, styles.backRightBtnRight]}
-          onPress={() => deleteRow(rowMap, data.item.key)}
-        >
-          <Text style={styles.backTextWhite}>Delete</Text>
-        </TouchableOpacity>
-      </View>
-    );
 
     return (
       <View style={styles.container}>
@@ -184,45 +137,44 @@ export default class Try extends Component<LightProps, LightState> {
         </View>
         <View>
           <SwipeListView
-          disableRightSwipe
+            disableRightSwipe
             data={this.state.drinks}
-            renderItem={renderItem}
-            renderHiddenItem={renderHiddenItem}
+            renderItem={({ item }) => (
+              <TouchableHighlight
+                onPress={() => console.log('You touched me')}
+                style={styles.rowFront}
+                underlayColor={'#AAA'}
+              >
+                <View style={{ flexDirection: 'row' }}>
+                  <Text>{item.percentage}%</Text>
+                  <Text>{item.name}</Text>
+                  <Text note>{item.volume} {volumeUnitToString(item.unit)}</Text>
+                  <Text>{intervalToText(item.startTime)}</Text>
+                </View>
+              </TouchableHighlight>
+            )}
+            renderHiddenItem={(data) => (
+              <View style={styles.rowBack}>
+                <Text>Left</Text>
+                <TouchableOpacity
+                  style={[styles.backRightBtn, styles.backRightBtnLeft]}
+                  onPress={() => this.duplicateDrink(data.item)}
+                >
+                  <Text style={styles.backTextWhite}>Duplicate</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[styles.backRightBtn, styles.backRightBtnRight]}
+                  onPress={() => this.removeDrink(data.item)}
+                >
+                  <Text style={styles.backTextWhite}>Delete</Text>
+                </TouchableOpacity>
+              </View>
+            )}
             leftOpenValue={75}
             rightOpenValue={-150}
             previewRowKey={'0'}
             previewOpenValue={-40}
             previewOpenDelay={3000}
-            onRowDidOpen={onRowDidOpen}
-          />
-          <List
-            dataArray={this.state.drinks}
-            renderItem={({ item }) => (
-              <ListItem avatar>
-                <Left>
-                  <Text>{item.percentage}%</Text>
-                </Left>
-                <Body>
-                  {/* <DrinkComponent
-                    key={item.key}
-                    id={item.id}
-                    name={item.name}
-                    percentage={item.percentage}
-                    startTime={item.startTime}
-                    unit={item.unit}
-                    volume={item.volume}
-                    onRemove={this.removeDrink}
-                    onDuplicate={this.duplicateDrink}
-                    currentTime={this.state.currentTime}
-                  /> */}
-                  <Text>{item.name}</Text>
-                  <Text note>{item.volume} {volumeUnitToString(item.unit)}</Text>
-                </Body>
-                <Right>
-                  <Text>{intervalToText(item.startTime)}</Text>
-                </Right>
-              </ListItem>
-            )}
           />
         </View>
         <View style={{ borderWidth: 0.5, borderColor: 'black', margin: 10 }} />
@@ -251,42 +203,42 @@ export default class Try extends Component<LightProps, LightState> {
 
 const styles = StyleSheet.create({
   container: {
-      backgroundColor: 'white',
-      flex: 1,
+    backgroundColor: 'white',
+    flex: 1,
   },
   backTextWhite: {
-      color: '#FFF',
+    color: '#FFF',
   },
   rowFront: {
-      alignItems: 'center',
-      backgroundColor: '#CCC',
-      borderBottomColor: 'black',
-      borderBottomWidth: 1,
-      justifyContent: 'center',
-      height: 50,
+    alignItems: 'center',
+    backgroundColor: '#CCC',
+    borderBottomColor: 'black',
+    borderBottomWidth: 1,
+    justifyContent: 'center',
+    height: 50,
   },
   rowBack: {
-      alignItems: 'center',
-      backgroundColor: '#DDD',
-      flex: 1,
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      paddingLeft: 15,
+    alignItems: 'center',
+    backgroundColor: '#DDD',
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingLeft: 15,
   },
   backRightBtn: {
-      alignItems: 'center',
-      bottom: 0,
-      justifyContent: 'center',
-      position: 'absolute',
-      top: 0,
-      width: 75,
+    alignItems: 'center',
+    bottom: 0,
+    justifyContent: 'center',
+    position: 'absolute',
+    top: 0,
+    width: 75,
   },
   backRightBtnLeft: {
-      backgroundColor: 'blue',
-      right: 75,
+    backgroundColor: 'blue',
+    right: 75,
   },
   backRightBtnRight: {
-      backgroundColor: 'red',
-      right: 0,
+    backgroundColor: 'red',
+    right: 0,
   },
 });
