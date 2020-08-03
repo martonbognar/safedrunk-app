@@ -10,12 +10,14 @@ import { IBasicData, getBasicDataFromStorage } from '../data/BasicData';
 import { intervalToText } from '../utils/Strings';
 import { ScrollView } from 'react-native-gesture-handler';
 import { SwipeListView } from 'react-native-swipe-list-view';
+import { calculateEbac } from '../utils/BloodAlcohol';
 
 interface LightState {
   drinks: IDrink[];
   keygen: number;
   basicData: IBasicData;
   currentTime: Date;
+  currentBAC: number;
 }
 
 interface LightProps {
@@ -45,6 +47,7 @@ export default class Try extends Component<LightProps, LightState> {
         weightUnit: WeightUnit.Kg,
       },
       currentTime: new Date(),
+      currentBAC: 0,
     };
 
     this.interval = -1;
@@ -60,7 +63,18 @@ export default class Try extends Component<LightProps, LightState> {
     this.loadBasicData();
     this.loadDrinks();
     const self = this;
-    this.interval = setInterval(() => self.setState({ currentTime: new Date() }), 10000);
+
+    this.interval = setInterval(() => {
+      const currentTime = new Date();
+      self.setState({
+        currentTime: currentTime,
+        currentBAC: calculateEbac(
+          self.state.drinks,
+          currentTime,
+          self.state.basicData,
+        )
+      })
+    }, 10000);
   }
 
   componentWillUnmount() {
@@ -129,7 +143,7 @@ export default class Try extends Component<LightProps, LightState> {
     return (
       <View style={styles.container}>
         <View style={{ justifyContent: 'space-between', flexDirection: 'row', margin: 5, alignItems: 'center', borderBottomColor: 'black', borderBottomWidth: 2 }}>
-          <Text style={{ fontSize: 25 }}>BAC: 0.34%</Text>
+          <Text style={{ fontSize: 25 }}>BAC: {this.state.currentBAC.toFixed(3)}%</Text>
           <Button small warning rounded
             onPress={() =>
               this.props.navigation.navigate('Settings')
@@ -184,6 +198,7 @@ export default class Try extends Component<LightProps, LightState> {
             drinks={this.state.drinks}
             basicData={this.state.basicData}
             currentTime={this.state.currentTime}
+            ebac={this.state.currentBAC}
           />
         </View>
         <Fab

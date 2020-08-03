@@ -19,6 +19,7 @@ interface CalculatorProps {
   };
   drinks: IDrink[];
   currentTime: Date;
+  ebac: number;
 }
 
 export default class Calculator extends Component<
@@ -34,12 +35,6 @@ export default class Calculator extends Component<
   }
 
   render() {
-    const ebac = calculateEbac(
-      this.props.drinks,
-      new Date(),
-      this.props.basicData,
-    );
-
     let effects;
 
     if (this.state.showEffects) {
@@ -49,7 +44,7 @@ export default class Calculator extends Component<
             title="v Effects"
             onPress={() => this.setState({showEffects: false})}
           />
-          <Effects percentage={ebac} />
+          <Effects percentage={this.props.ebac} />
         </View>
       );
     } else {
@@ -89,7 +84,6 @@ export default class Calculator extends Component<
     return (
       <View>
         <View>
-          <Text>Blood alcohol content: {ebac}%</Text>
           {effects}
         </View>
         {/* <View>{graph}</View> */}

@@ -174,6 +174,7 @@ export default class DefaultNewDrink extends Component<
     } else {
       drinkData.percentage = this.state.manualPercentage;
     }
+    // TODO: convert date to string!
     this.props.navigation.navigate('Try', {drink: drinkData});
   }
 
