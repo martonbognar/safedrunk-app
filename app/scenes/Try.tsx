@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { FlatList, Alert, StyleSheet } from 'react-native';
+import { FlatList, Alert, StyleSheet, TouchableHighlight, TouchableOpacity } from 'react-native';
 import { Container, Header, View, Button, Icon, Fab, Text, List, ListItem, Left, Body, Right } from 'native-base';
 
 import DrinkComponent from '../Drink';
@@ -9,6 +9,7 @@ import { WeightUnit, Sex, stringToVolumeUnit, volumeUnitToString } from '../data
 import { IBasicData, getBasicDataFromStorage } from '../data/BasicData';
 import { intervalToText } from '../utils/Strings';
 import { ScrollView } from 'react-native-gesture-handler';
+import { SwipeListView } from 'react-native-swipe-list-view';
 
 interface LightState {
   drinks: IDrink[];
@@ -124,16 +125,76 @@ export default class Try extends Component<LightProps, LightState> {
 
   render() {
     const self = this;
+    const closeRow = (rowMap, rowKey) => {
+      if (rowMap[rowKey]) {
+        rowMap[rowKey].closeRow();
+      }
+    };
+
+    const deleteRow = (rowMap, rowKey) => {
+      closeRow(rowMap, rowKey);
+      const newData = [...listData];
+      const prevIndex = listData.findIndex(item => item.key === rowKey);
+      newData.splice(prevIndex, 1);
+      setListData(newData);
+    };
+
+    const onRowDidOpen = rowKey => {
+      console.log('This row opened', rowKey);
+    };
+
+    const renderItem = data => (
+      <TouchableHighlight
+        onPress={() => console.log('You touched me')}
+        style={styles.rowFront}
+        underlayColor={'#AAA'}
+      >
+        <View>
+          <Text>I am {data.item.text} in a SwipeListView</Text>
+        </View>
+      </TouchableHighlight>
+    );
+
+    const renderHiddenItem = (data, rowMap) => (
+      <View style={styles.rowBack}>
+        <Text>Left</Text>
+        <TouchableOpacity
+          style={[styles.backRightBtn, styles.backRightBtnLeft]}
+          onPress={() => closeRow(rowMap, data.item.key)}
+        >
+          <Text style={styles.backTextWhite}>Close</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.backRightBtn, styles.backRightBtnRight]}
+          onPress={() => deleteRow(rowMap, data.item.key)}
+        >
+          <Text style={styles.backTextWhite}>Delete</Text>
+        </TouchableOpacity>
+      </View>
+    );
+
     return (
       <View style={styles.container}>
         <View style={{ justifyContent: 'space-between', flexDirection: 'row', margin: 5, alignItems: 'center', borderBottomColor: 'black', borderBottomWidth: 2 }}>
-          <Text style={{fontSize: 25}}>BAC: 0.34%</Text>
+          <Text style={{ fontSize: 25 }}>BAC: 0.34%</Text>
           <Button small warning rounded
             onPress={() =>
               this.props.navigation.navigate('Settings')
             }><Text>⚙️</Text></Button>
         </View>
         <View>
+          <SwipeListView
+          disableRightSwipe
+            data={this.state.drinks}
+            renderItem={renderItem}
+            renderHiddenItem={renderHiddenItem}
+            leftOpenValue={75}
+            rightOpenValue={-150}
+            previewRowKey={'0'}
+            previewOpenValue={-40}
+            previewOpenDelay={3000}
+            onRowDidOpen={onRowDidOpen}
+          />
           <List
             dataArray={this.state.drinks}
             renderItem={({ item }) => (
@@ -155,7 +216,7 @@ export default class Try extends Component<LightProps, LightState> {
                     currentTime={this.state.currentTime}
                   /> */}
                   <Text>{item.name}</Text>
-                <Text note>{item.volume} {volumeUnitToString(item.unit)}</Text>
+                  <Text note>{item.volume} {volumeUnitToString(item.unit)}</Text>
                 </Body>
                 <Right>
                   <Text>{intervalToText(item.startTime)}</Text>
@@ -188,10 +249,44 @@ export default class Try extends Component<LightProps, LightState> {
   }
 }
 
-
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    // justifyContent: 'space-between'
-  }
-})
+      backgroundColor: 'white',
+      flex: 1,
+  },
+  backTextWhite: {
+      color: '#FFF',
+  },
+  rowFront: {
+      alignItems: 'center',
+      backgroundColor: '#CCC',
+      borderBottomColor: 'black',
+      borderBottomWidth: 1,
+      justifyContent: 'center',
+      height: 50,
+  },
+  rowBack: {
+      alignItems: 'center',
+      backgroundColor: '#DDD',
+      flex: 1,
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      paddingLeft: 15,
+  },
+  backRightBtn: {
+      alignItems: 'center',
+      bottom: 0,
+      justifyContent: 'center',
+      position: 'absolute',
+      top: 0,
+      width: 75,
+  },
+  backRightBtnLeft: {
+      backgroundColor: 'blue',
+      right: 75,
+  },
+  backRightBtnRight: {
+      backgroundColor: 'red',
+      right: 0,
+  },
+});
