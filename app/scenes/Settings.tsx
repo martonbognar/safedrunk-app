@@ -55,7 +55,7 @@ export default class Settings extends Component<SettingsProps, SettingsState> {
 
   render() {
     const sexPicker = listOfSexValues.map(value => (
-      <Picker.Item label={sexToString(value)} value={value} />
+      <Picker.Item label={sexToString(value)} value={value} key={sexToString(value)} />
     ));
     const weightUnitPicker = listOfWeightUnitValues.map(value => (
       <Picker.Item label={weightUnitToString(value)} value={value} />

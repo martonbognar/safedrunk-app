@@ -144,10 +144,12 @@ export default class Try extends Component<LightProps, LightState> {
       <View style={styles.container}>
         <View style={{ justifyContent: 'space-between', flexDirection: 'row', margin: 5, alignItems: 'center', borderBottomColor: 'black', borderBottomWidth: 2 }}>
           <Text style={{ fontSize: 25 }}>BAC: {this.state.currentBAC.toFixed(3)}%</Text>
-          <Button small warning rounded
+          <Button icon bordered warning
             onPress={() =>
               this.props.navigation.navigate('Settings')
-            }><Text>⚙️</Text></Button>
+            }>
+            <Icon name='cog' style={{color: 'black'}} />
+          </Button>
         </View>
         <View>
           <SwipeListView
